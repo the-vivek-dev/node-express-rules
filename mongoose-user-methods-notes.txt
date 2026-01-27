@@ -1,0 +1,133 @@
+/**
+ * ===========================
+ * MONGOOSE MODEL (User) METHODS – SHORT NOTES
+ * ===========================
+ *
+ * 🔹 User kya hai?
+ * - 'User' ek Mongoose Model hai.
+ * - Ye MongoDB ke ek collection (usually 'users') ko represent karta hai.
+ * - Iske through hum database par CRUD operations karte hain.
+ *
+ * ===========================
+ * 1️⃣ READ (Data Fetch)
+ * ===========================
+ *
+ * User.find()
+ * - Sab documents return karta hai
+ * - Return type: Array
+ *
+ * User.findOne({ condition })
+ * - First matching document return karta hai
+ * - Return type: Object | null
+ *
+ * User.findById(id)
+ * - _id ke basis par ek document return karta hai
+ * - Return type: Object | null
+ *
+ * ===========================
+ * 2️⃣ CREATE (Data Insert)
+ * ===========================
+ *
+ * User.create({ data })
+ * - Naya document create karta hai
+ * - Auto _id generate hoti hai
+ * - Return: created document object
+ *
+ * new User({ data }).save()
+ * - Manual create + save
+ * - Jab save se pehle logic lagani ho tab useful
+ *
+ * ===========================
+ * 3️⃣ UPDATE (Data Update)
+ * ===========================
+ *
+ * User.findByIdAndUpdate(id, data, { new: true })
+ * - _id ke basis par document update karta hai
+ * - new: true → updated document return karta hai
+ *
+ * User.findOneAndUpdate(condition, data)
+ * - Condition ke basis par update
+ *
+ * User.updateOne(condition, data)
+ * - Sirf update info deta hai (document return nahi karta)
+ *
+ * User.updateMany(condition, data)
+ * - Multiple documents update karta hai
+ *
+ * ===========================
+ * 4️⃣ DELETE (Data Delete)
+ * ===========================
+ *
+ * User.findByIdAndDelete(id)
+ * - _id ke basis par document delete karta hai
+ * - Deleted document return karta hai ya null
+ *
+ * User.findOneAndDelete(condition)
+ * - Condition ke basis par delete
+ *
+ * User.deleteOne(condition)
+ * - Sirf delete result deta hai
+ *
+ * User.deleteMany(condition)
+ * - Multiple documents delete karta hai
+ *
+ * ===========================
+ * 5️⃣ COUNT / CHECK (Very Important)
+ * ===========================
+ *
+ * User.countDocuments()
+ * - Total documents count karta hai
+ *
+ * User.exists(condition)
+ * - Check karta hai document exist karta hai ya nahi
+ * - Return: true / null
+ *
+ * ===========================
+ * 6️⃣ QUERY HELPERS (Filtering / Pagination)
+ * ===========================
+ *
+ * select() → fields choose karna
+ * sort()   → order set karna
+ * limit()  → max documents
+ * skip()   → pagination ke liye
+ *
+ * Example:
+ * User.find()
+ *   .select("name email")
+ *   .sort({ createdAt: -1 })
+ *   .limit(10)
+ *   .skip(20);
+ *
+ * ===========================
+ * 7️⃣ ADVANCED
+ * ===========================
+ *
+ * User.aggregate()
+ * - Complex data processing (reports, analytics)
+ *
+ * User.populate()
+ * - Reference collection ka data laata hai
+ *
+ * User.distinct(field)
+ * - Unique values return karta hai
+ *
+ * ===========================
+ * ✅ MOST USED METHODS (90% REAL WORLD)
+ * ===========================
+ *
+ * - find
+ * - findOne
+ * - findById
+ * - create
+ * - findByIdAndUpdate
+ * - findByIdAndDelete
+ * - countDocuments
+ * - exists
+ *
+ * ===========================
+ * ONE-LINE INTERVIEW ANSWER
+ * ===========================
+ *
+ * "Mongoose Model MongoDB collection par CRUD, Query,
+ * Aggregation aur Utility operations perform karta hai."
+ */
