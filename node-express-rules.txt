@@ -294,3 +294,147 @@ console.log(11)
  */
 
 =======================################ (6) ###############=================================
+/**
+ * const user = await User.findByIdAndDelete(req.params.id);
+ *
+ * Step by step explanation:
+ *
+ * 1️⃣ User
+ * - 'User' ek Mongoose model hai.
+ * - Ye MongoDB ke 'users' collection se linked hai.
+ * - Collection me sab documents store hote hain.
+ *
+ * 2️⃣ .findByIdAndDelete()
+ * - Ye Mongoose ka method hai.
+ * - Kaam: specific document ko delete karna based on '_id'.
+ * - Argument me document ka _id dena padta hai.
+ *   Example: User.findByIdAndDelete("64f0e3a2c5a3")
+ * - Return value: deleted document object (agar document exist karta tha) ya null (agar document nahi mila).
+ *
+ * 3️⃣ req.params.id
+ * - Ye Express.js ka object hai.
+ * - req.params me URL parameters store hote hain.
+ * - Agar route hai '/users/:id' aur user ne URL me '/users/64f0e3a2c5a3' hit kiya:
+ *     req.params.id = "64f0e3a2c5a3"
+ * - Ye _id ke liye findByIdAndDelete() me pass hota hai.
+ *
+ * 4️⃣ await
+ * - .findByIdAndDelete() bhi asynchronous operation hai.
+ * - 'await' ka matlab: "Jab tak database me delete operation complete na ho, next line pe mat jao"
+ * - Iske bina .then() ka use karna padta.
+ *
+ * 5️⃣ const user = ...
+ * - 'user' variable me deleted document ka object store hota hai.
+ * - Agar document exist karta tha:
+ *   {
+ *     _id: "64f0e3a2c5a3",
+ *     name: "Vivek",
+ *     email: "vivek@gmail.com"
+ *   }
+ * - Agar document exist nahi karta → null return hota hai.
+ *
+ * 6️⃣ Example
+ * app.delete("/users/:id", async (req, res) => {
+ *   const user = await User.findByIdAndDelete(req.params.id);
+ *   console.log(user);
+ *   res.send(user);
+ * });
+ *
+ * - URL hit: /users/64f0e3a2c5a3
+ * - Output (agar document exist karta hai):
+ *   {
+ *     _id: "64f0e3a2c5a3",
+ *     name: "Vivek",
+ *     email: "vivek@gmail.com"
+ *   }
+ * - Agar document exist nahi karta → output: null
+ *
+ * ✅ Summary
+ * - User → Mongoose model (collection reference).
+ * - .findByIdAndDelete() → specific document ko delete karta hai _id ke basis par.
+ * - req.params.id → URL se aaya hua id.
+ * - await → asynchronous wait.
+ * - user → deleted document object ya null.
+ */
+
+=======================################# (7) #################============================
+/**
+ * const user = await User.findByIdAndUpdate(
+ *   req.params.id,
+ *   { name, email },
+ *   { new: true }
+ * );
+ *
+ * Step by step explanation:
+ *
+ * 1️⃣ User
+ * - 'User' ek Mongoose model hai.
+ * - Ye MongoDB ke 'users' collection se linked hai.
+ * - Is model ke through hum collection ke documents ko update kar sakte hain.
+ *
+ * 2️⃣ .findByIdAndUpdate()
+ * - Ye Mongoose ka method hai.
+ * - Kaam: specific document ko uske '_id' ke basis par update karna.
+ * - Ye ek hi step me:
+ *   - document ko find karta hai
+ *   - aur usko update bhi karta hai
+ *
+ * 3️⃣ req.params.id
+ * - Ye Express.js ka object hai.
+ * - req.params me URL se aaya hua data hota hai.
+ * - Agar route hai '/users/:id' aur URL hai '/users/64f0e3a2c5a3':
+ *     req.params.id = "64f0e3a2c5a3"
+ * - Ye value document ke '_id' ke liye use hoti hai.
+ *
+ * 4️⃣ { name, email }
+ * - Ye update object hai.
+ * - Matlab: jo fields yahan pass kiye gaye hain,
+ *   unki value database me update ho jayegi.
+ * - Ye JavaScript object shorthand hai:
+ *   { name: name, email: email } ko short me { name, email } likha gaya hai.
+ *
+ * 5️⃣ { new: true }
+ * - Ye options object hai.
+ * - new: true ka matlab:
+ *   → update ke baad JO NAYA document hai, wahi return karo.
+ * - Agar new: true nahi likhenge:
+ *   → purana (update se pehle wala) document return hota hai.
+ *
+ * 6️⃣ await
+ * - findByIdAndUpdate() asynchronous operation hai.
+ * - 'await' ka matlab:
+ *   "jab tak database me update complete na ho jaye, next line pe mat jao"
+ *
+ * 7️⃣ const user = ...
+ * - 'user' variable me UPDATED document store hota hai.
+ * - Example (update ke baad):
+ *   {
+ *     _id: "64f0e3a2c5a3",
+ *     name: "New Name",
+ *     email: "newemail@gmail.com"
+ *   }
+ * - Agar given id ka document exist nahi karta → null return hota hai.
+ *
+ * 8️⃣ Example
+ * app.put("/users/:id", async (req, res) => {
+ *   const { name, email } = req.body;
+ *   const user = await User.findByIdAndUpdate(
+ *     req.params.id,
+ *     { name, email },
+ *     { new: true }
+ *   );
+ *   res.send(user);
+ * });
+ *
+ * ✅ Summary
+ * - User → Mongoose model (collection reference).
+ * - findByIdAndUpdate() → id ke basis par document update karta hai.
+ * - req.params.id → URL se aaya hua document id.
+ * - { name, email } → update hone wala data.
+ * - { new: true } → updated document return karne ke liye.
+ * - await → asynchronous wait.
+ * - user → updated document object ya null.
+ */
+
+============================################ (8) ################========================
+
