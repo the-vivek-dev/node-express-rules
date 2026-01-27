@@ -57,8 +57,6 @@
  * ❌ Dono system ko mix nahi karna chahiye
  * ✅ Ek project me ek hi module system use karo
  *
- *
- * 🔹 Interview / IAS Ready Line
  * ---------------------------------------------------------------------------
  * "require is executed at runtime line by line,
  *  while import statements are hoisted and executed before the main code."
