@@ -1,5 +1,46 @@
 /**
- * ===========================
+ * 1. find
+ * 2. findOne
+ * 3. findById
+ *
+ * 4. create
+ * 5. save
+ * 6. insertMany
+ *
+ * 7. findByIdAndUpdate
+ * 8. findOneAndUpdate
+ * 9. updateOne
+ * 10. updateMany
+ * 11. replaceOne
+ *
+ * 12. findByIdAndDelete
+ * 13. findOneAndDelete
+ * 14. deleteOne
+ * 15. deleteMany
+ *
+ * 16. countDocuments
+ * 17. estimatedDocumentCount
+ * 18. exists
+ * 19. distinct
+ *
+ * 20. aggregate
+ * 21. populate
+ * 22. lean
+ * 23. watch
+ *
+ * 24. bulkWrite
+ * 25. where
+ * 26. select
+ * 27. sort
+ * 28. limit
+ * 29. skip
+ * 30. collation
+ * 31. hint
+ *
+ * 32. validate
+ * 33. discriminator
+ *
+ * ================================================================
  * MONGOOSE MODEL (User) METHODS – SHORT NOTES
  * ===========================
  *
