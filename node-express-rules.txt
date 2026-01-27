@@ -1,3 +1,4 @@
+============####################################=================================
 /**
  * ===================== require vs import (Node.js Notes) =====================
  *
@@ -63,3 +64,49 @@
  *
  * ============================================================================
  */
+
+======================#######################################=======================
+/**
+💡 Key point about Express routes:
+
+1️⃣ Route file (like user.routes.js) **sirf ek baar load hoti hai** jab server start hota hai.
+   - Matlab top-level console.log() statements sirf server start ke time execute hote hain.
+   - Jaise tumhare code me: console.log(1) to console.log(11)
+
+2️⃣ Jab koi request aati hai (GET, POST, DELETE, PUT):
+   - Node.js **route file ko fir se execute nahi karta**
+   - Sirf **us route ka handler function** call hota hai.
+   - Example: router.get("/", getAllUsers) → getAllUsers function execute hoga
+   - Isliye **route file ke top-level logs request pe nahi chalenge**
+*/
+console.log(1)
+import express from "express";
+console.log(2)
+import {
+  getAllUsers,
+  getUserById,
+  createUser,
+  deleteAllUsers,
+  deleteUserById,
+  updateUser,
+} from "../controllers/user.controller.js";
+console.log(3)
+const router = express.Router();
+console.log(4)
+
+router.get("/", getAllUsers);
+console.log(5)
+router.get("/:id", getUserById);
+console.log(6)
+router.post("/", createUser);
+console.log(7)
+router.delete("/", deleteAllUsers);
+console.log(8)
+router.delete("/:id", deleteUserById);
+console.log(9)
+router.put("/:id", updateUser);
+console.log(10)
+export default router;
+console.log(11)
+================================#############################==============================
+
