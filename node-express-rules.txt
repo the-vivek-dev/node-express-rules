@@ -1,0 +1,67 @@
+/**
+ * ===================== require vs import (Node.js Notes) =====================
+ *
+ * 🔹 CommonJS (require)
+ * ---------------------------------------------------------------------------
+ * - require() ek normal function hota hai
+ * - Code line-by-line (top to bottom) execute hota hai
+ * - Jahan require() likha hota hai, wahi pe:
+ *     → module load hota hai
+ *     → module ka top-level code execute hota hai
+ * - Node.js require() ko koi extra priority nahi deta
+ *
+ * Example:
+ *   console.log(1);
+ *   const data = require("./file.js");
+ *   console.log(2);
+ *
+ * Output:
+ *   1
+ *   (file.js ka output)
+ *   2
+ *
+ * 👉 Isliye require() use karne par execution pure sequence me hota hai
+ *
+ *
+ * 🔹 ES Modules (import)
+ * ---------------------------------------------------------------------------
+ * - import ek special syntax hota hai (normal function nahi)
+ * - import statements hoisted hote hain
+ * - File ka code run hone se pehle:
+ *     → saare imports resolve hote hain
+ *     → imported files execute hoti hain
+ * - Isliye Node.js import ko priority deta hai
+ *
+ * Example:
+ *   console.log(1);
+ *   import "./file.js";
+ *   console.log(2);
+ *
+ * Output:
+ *   (file.js ka output)
+ *   1
+ *   2
+ *
+ *
+ * 🔹 Main Difference (One Line)
+ * ---------------------------------------------------------------------------
+ * require()  → runtime execution (no priority, sequence follow hota hai)
+ * import     → compile-time execution (pehle import, baad main code)
+ *
+ *
+ * 🔹 Golden Rule (Important)
+ * ---------------------------------------------------------------------------
+ * import  ↔ export
+ * require ↔ module.exports
+ *
+ * ❌ Dono system ko mix nahi karna chahiye
+ * ✅ Ek project me ek hi module system use karo
+ *
+ *
+ * 🔹 Interview / IAS Ready Line
+ * ---------------------------------------------------------------------------
+ * "require is executed at runtime line by line,
+ *  while import statements are hoisted and executed before the main code."
+ *
+ * ============================================================================
+ */
