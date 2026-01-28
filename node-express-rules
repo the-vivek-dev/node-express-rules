@@ -1,0 +1,404 @@
+============################## (1) ##################=================================
+/**
+ * ===================== require vs import (Node.js Notes) =====================
+ *
+ * 🔹 CommonJS (require)
+ * ---------------------------------------------------------------------------
+ * - require() ek normal function hota hai
+ * - Code line-by-line (top to bottom) execute hota hai
+ * - Jahan require() likha hota hai, wahi pe:
+ *     → module load hota hai
+ *     → module ka top-level code execute hota hai
+ * - Node.js require() ko koi extra priority nahi deta
+ *
+ * Example:
+ *   console.log(1);
+ *   const data = require("./file.js");
+ *   console.log(2);
+ *
+ * Output:
+ *   1
+ *   (file.js ka output)
+ *   2
+ *
+ * 👉 Isliye require() use karne par execution pure sequence me hota hai
+ *
+ *
+ * 🔹 ES Modules (import)
+ * ---------------------------------------------------------------------------
+ * - import ek special syntax hota hai (normal function nahi)
+ * - import statements hoisted hote hain
+ * - File ka code run hone se pehle:
+ *     → saare imports resolve hote hain
+ *     → imported files execute hoti hain
+ * - Isliye Node.js import ko priority deta hai
+ *
+ * Example:
+ *   console.log(1);
+ *   import "./file.js";
+ *   console.log(2);
+ *
+ * Output:
+ *   (file.js ka output)
+ *   1
+ *   2
+ *
+ *
+ * 🔹 Main Difference (One Line)
+ * ---------------------------------------------------------------------------
+ * require()  → runtime execution (no priority, sequence follow hota hai)
+ * import     → compile-time execution (pehle import, baad main code)
+ *
+ *
+ * 🔹 Golden Rule (Important)
+ * ---------------------------------------------------------------------------
+ * import  ↔ export
+ * require ↔ module.exports
+ *
+ * ❌ Dono system ko mix nahi karna chahiye
+ * ✅ Ek project me ek hi module system use karo
+ *
+ * ---------------------------------------------------------------------------
+ * "require is executed at runtime line by line,
+ *  while import statements are hoisted and executed before the main code."
+ *
+ * ============================================================================
+ */
+
+======================################# (2) ######################=======================
+/**
+💡 Key point about Express routes:
+
+1️⃣ Route file (like user.routes.js) **sirf ek baar load hoti hai** jab server start hota hai.
+   - Matlab top-level console.log() statements sirf server start ke time execute hote hain.
+   - Jaise tumhare code me: console.log(1) to console.log(11)
+
+2️⃣ Jab koi request aati hai (GET, POST, DELETE, PUT):
+   - Node.js **route file ko fir se execute nahi karta**
+   - Sirf **us route ka handler function** call hota hai.
+   - Example: router.get("/", getAllUsers) → getAllUsers function execute hoga
+   - Isliye **route file ke top-level logs request pe nahi chalenge**
+*/
+console.log(1)
+import express from "express";
+console.log(2)
+import {
+  getAllUsers,
+  getUserById,
+  createUser,
+  deleteAllUsers,
+  deleteUserById,
+  updateUser,
+} from "../controllers/user.controller.js";
+console.log(3)
+const router = express.Router();
+console.log(4)
+
+router.get("/", getAllUsers);
+console.log(5)
+router.get("/:id", getUserById);
+console.log(6)
+router.post("/", createUser);
+console.log(7)
+router.delete("/", deleteAllUsers);
+console.log(8)
+router.delete("/:id", deleteUserById);
+console.log(9)
+router.put("/:id", updateUser);
+console.log(10)
+export default router;
+console.log(11)
+
+================================############## (3) ###############==============================
+/**
+ * const userSchema = new mongoose.Schema(
+ *   {
+ *     name: {
+ *       type: String,
+ *       required: true,
+ *       trim: true,
+ *     },
+ *     email: {
+ *       type: String,
+ *       required: true,
+ *       unique: true,
+ *       lowercase: true,
+ *     },
+ *   },
+ *   { timestamps: true }
+ * );
+ *
+ * ============================
+ * STEP BY STEP EXPLANATION
+ * ============================
+ *
+ * 🔹 High level idea:
+ * - Schema ek blueprint / structure / rule book hota hai.
+ * - Ye batata hai:
+ *   - kaun sa field hoga
+ *   - uska data type kya hoga
+ *   - kaun sa field mandatory hai
+ *   - kaun sa unique hoga
+ * - MongoDB khud schema-less hota hai,
+ *   lekin Mongoose schema enforce karta hai.
+ *
+ * ----------------------------
+ * 1️⃣ mongoose
+ * ----------------------------
+ * - mongoose ek library hai (ODM – Object Data Modeling).
+ * - Ye MongoDB ke upar ek layer provide karta hai.
+ * - MongoDB data ko JavaScript object jaisa treat karne deta hai.
+ *
+ * ----------------------------
+ * 2️⃣ mongoose.Schema
+ * ----------------------------
+ * - Schema mongoose ki ek CLASS hai.
+ * - Ye ek constructor class hai.
+ *
+ * ----------------------------
+ * 3️⃣ new mongoose.Schema(...)
+ * ----------------------------
+ * - 'new' keyword se Schema class ka naya OBJECT ban raha hai.
+ * - Matlab:
+ *   Schema class → object create ho raha hai.
+ *
+ * ----------------------------
+ * 4️⃣ userSchema variable
+ * ----------------------------
+ * - userSchema me Schema ka OBJECT store hota hai.
+ * - Ye collection nahi hai.
+ * - Ye document nahi hai.
+ * - Ye data nahi hai.
+ * - Ye sirf RULE BOOK / BLUEPRINT hai.
+ *
+ * Example:
+ * - Ghar banane se pehle → blueprint
+ * - Form bharne se pehle → form ka format
+ *
+ * ----------------------------
+ * 5️⃣ First argument (fields object)
+ * ----------------------------
+ * {
+ *   name: {...},
+ *   email: {...}
+ * }
+ *
+ * - Ye define karta hai ki document me kaun-kaun se fields honge.
+ *
+ * ----------------------------
+ * 6️⃣ name field explanation
+ * ----------------------------
+ * name: {
+ *   type: String,
+ *   required: true,
+ *   trim: true
+ * }
+ *
+ * - type: String
+ *   → name field sirf string hi hogi.
+ *   → number ya koi aur type aaya to error.
+ *
+ * - required: true
+ *   → name mandatory hai.
+ *   → name nahi diya to validation error.
+ *
+ * - trim: true
+ *   → extra spaces hata deta hai.
+ *   → "   Vivek   " → "Vivek"
+ *
+ * ----------------------------
+ * 7️⃣ email field explanation
+ * ----------------------------
+ * email: {
+ *   type: String,
+ *   required: true,
+ *   unique: true,
+ *   lowercase: true
+ * }
+ *
+ * - unique: true
+ *   → MongoDB me unique index create karta hai.
+ *   → same email dobara insert hua to error.
+ *   → ye database-level rule hai (sirf validation nahi).
+ *
+ * - lowercase: true
+ *   → save hone se pehle email lowercase me convert ho jata hai.
+ *   → VIVEK@GMAIL.COM → vivek@gmail.com
+ *
+ * ----------------------------
+ * 8️⃣ Second argument { timestamps: true }
+ * ----------------------------
+ * - Ye automatically 2 fields add karta hai:
+ *   - createdAt
+ *   - updatedAt
+ * - Tumhe manually likhne ki zarurat nahi hoti.
+ *
+ * ----------------------------
+ * 9️⃣ Behind the scenes (data save flow)
+ * ----------------------------
+ * Jab User.create({ name, email }) call hota hai:
+ *
+ * JavaScript Object
+ *        ↓
+ * Schema rules check
+ *        ↓
+ * Validation pass?
+ *        ↓
+ * MongoDB me document insert
+ *
+ * - Schema gatekeeper ki tarah kaam karta hai.
+ *
+ * ----------------------------
+ * 🔟 Agar Schema use na kare to kya hoga?
+ * ----------------------------
+ * - Koi rules nahi honge.
+ * - MongoDB kuch bhi accept kar lega:
+ *   { name: 123, email: true, xyz: [], abc: {} }
+ * - Data inconsistent ho jayega.
+ * - Production me bugs aur disaster ho sakta hai.
+ *
+ * ----------------------------
+ * 1️⃣1️⃣ userSchema ka actual use
+ * ----------------------------
+ * const User = mongoose.model("User", userSchema);
+ *
+ * - Schema → rules + structure
+ * - Model → CRUD operations
+ * - Collection → actual data
+ *
+ * ----------------------------
+ * ✅ ONE LINE GOLDEN RULE
+ * ----------------------------
+ * Schema MongoDB ko discipline sikhata hai.
+ */
+=============################# (4) ###################==========================
+/**
+ * const User = mongoose.model("User", userSchema);
+ *
+ * ============================
+ * STEP BY STEP DEEP EXPLANATION
+ * ============================
+ *
+ * 🔹 High level idea:
+ * - Ye line Mongoose ka MODEL create karti hai.
+ * - Model ka use karke hi hum CRUD operations karte hain
+ *   (create, read, update, delete).
+ *
+ * ----------------------------
+ * 1️⃣ mongoose
+ * ----------------------------
+ * - mongoose ek library (ODM) hai.
+ * - Ye MongoDB aur Node.js ke beech bridge ka kaam karta hai.
+ *
+ * ----------------------------
+ * 2️⃣ mongoose.model
+ * ----------------------------
+ * - model mongoose ka ek METHOD hai.
+ * - Ye ek FUNCTION hai (class nahi).
+ *
+ * Signature (behind the scenes):
+ * mongoose.model(modelName, schema, collectionName?)
+ *
+ * Total arguments:
+ * - Minimum: 2
+ * - Maximum: 3
+ *
+ * ----------------------------
+ * 3️⃣ First argument: "User"
+ * ----------------------------
+ * - Ye model ka naam hai (string).
+ * - Is naam se hi tum code me model ko refer karoge.
+ *
+ * Behind the scenes:
+ * - Mongoose isko lowercase + plural bana deta hai.
+ * - "User" → "users"
+ * - Ye MongoDB collection ka naam ban jata hai.
+ *
+ * ----------------------------
+ * 4️⃣ Second argument: userSchema
+ * ----------------------------
+ * - userSchema ek OBJECT hai.
+ * - Ye mongoose.Schema class ka instance hai.
+ *
+ * - Iske andar:
+ *   - fields
+ *   - data types
+ *   - validations
+ *   - rules defined hote hain
+ *
+ * - Model ko bataya jata hai:
+ *   "Is structure ke according data allow karna"
+ *
+ * ----------------------------
+ * 5️⃣ (Optional) Third argument: collectionName
+ * ----------------------------
+ * Example:
+ * mongoose.model("User", userSchema, "my_users");
+ *
+ * - Agar diya:
+ *   → wahi exact collection use hoga.
+ * - Agar nahi diya:
+ *   → mongoose khud plural + lowercase bana deta hai.
+ *
+ * ----------------------------
+ * 6️⃣ Return value of mongoose.model()
+ * ----------------------------
+ * - mongoose.model() RETURN karta hai ek CLASS.
+ * - Ye class hi MODEL hoti hai.
+ *
+ * ----------------------------
+ * 7️⃣ const User = ...
+ * ----------------------------
+ * - User ek VARIABLE hai.
+ * - Is variable me ek MODEL CLASS store hoti hai.
+ *
+ * - Ye object nahi hai.
+ * - Ye class hai jiske methods hote hain.
+ *
+ * ----------------------------
+ * 8️⃣ User model se kya milta hai?
+ * ----------------------------
+ * User model ke paas built-in methods hote hain:
+ *
+ * - User.create()
+ * - User.find()
+ * - User.findById()
+ * - User.findByIdAndUpdate()
+ * - User.findByIdAndDelete()
+ *
+ * Ye sab methods MongoDB collection pe kaam karte hain.
+ *
+ * ----------------------------
+ * 9️⃣ Behind the scenes flow
+ * ----------------------------
+ * Schema (rules)
+ *      ↓
+ * Model (methods)
+ *      ↓
+ * Collection (users)
+ *      ↓
+ * Documents (actual data)
+ *
+ * ----------------------------
+ * 🔟 Agar model na banaye to kya hoga?
+ * ----------------------------
+ * - Tum MongoDB se baat hi nahi kar paoge.
+ * - CRUD operations possible nahi honge.
+ * - Schema akele kuch kaam ka nahi hota.
+ *
+ * ----------------------------
+ * 1️⃣1️⃣ Real world analogy
+ * ----------------------------
+ * - Schema → Rules / Blueprint
+ * - Model → Factory / Machine
+ * - Collection → Godown
+ * - Document → Product
+ *
+ * ----------------------------
+ * ✅ ONE LINE GOLDEN RULE
+ * ----------------------------
+ * Schema bina Model bekaar hai,
+ * Model bina Schema andha hai.
+ */
+
+==================############# (5) #################=================================
