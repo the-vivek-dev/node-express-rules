@@ -16,8 +16,10 @@ app.use(path, callback)
 Rules:
 - Exact path match zaroori nahi hota
 - HTTP method ka koi role nahi hota
-- Koi bhi HTTP method ho sakta hai (GET, POST, PUT, DELETE, etc.)
-- Path prefix match hota hai
+- Koi bhi HTTP method ho sakta hai (GET, POST, PUT, DELETE, etc.) sabhi HTTP method request ke lie app.use() call hoga
+- Path prefix match hota hai (prefix ka matalb huaa app.use('address/pincode', middleware) ke
+  path ke last path (pincode) se start hone vale sabhi request url ke lie app.use() method run hoga)
+
 
 Matlab:
 Agar user ka request URL, app.use() ke path se start hota hai,
@@ -120,7 +122,7 @@ Execution flow:
 Output:
 app.get() method called
 
--- Final One-Line Conclusion (Interview + GitHub)
+-- Final One-Line Conclusion
 
 app.use() prefix-based matching karta hai aur HTTP method se independent hota hai,
 jabki app.get()/post()/put()/delete() exact path aur exact HTTP method par kaam karte hain.
