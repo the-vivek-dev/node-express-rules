@@ -1,0 +1,128 @@
+/**
+ Express.js Routing – app.use() vs app.get()/post()/put()/delete()
+
+🔹 Express.js route checking rule (IMPORTANT)
+- Express.js routes ko top to bottom check karta hai
+- Jo route sabse pehle match ho jata hai, wahi execute hota hai
+- Jaise hi res.send() / res.json() / res.sendFile() call hota hai
+  👉 response close ho jata hai
+  👉 aage ke routes check nahi hote
+
+🔹 app.use() ka rule (Middleware rule)
+
+Syntax:
+app.use(path, callback)
+
+Rules:
+- Exact path match zaroori nahi hota
+- HTTP method ka koi role nahi hota
+- Koi bhi HTTP method ho sakta hai (GET, POST, PUT, DELETE, etc.)
+- Path prefix match hota hai
+
+Matlab:
+Agar user ka request URL, app.use() ke path se start hota hai,
+to app.use() execute ho jayega
+
+Example:
+app.use("/contact", handler);
+
+Ye sab match karega:
+- /contact
+- /contact/help
+- /contact/address
+
+Ye match nahi karega:
+- /about
+- /login
+
+🔹 app.get() / app.post() / app.put() / app.delete() ka rule
+
+Rules:
+- HTTP method exact match hona chahiye
+- Path exact match hona chahiye
+- Prefix match nahi hota
+
+Example:
+app.get("/about", handler);
+
+Match karega:
+- GET /about
+
+Match nahi karega:
+- POST /about
+- GET /about/us
+
+🔹 Summary table (Quick Revision)
+
+Feature                     | app.use()        | app.get()/post()/put()/delete()
+--------------------------- | ---------------- | ------------------------------
+HTTP Method                 | Any              | Exact
+Path matching               | Prefix           | Exact
+Middleware ke liye          | Best             | Not recommended
+Direct page/API ke liye     | Risky            | Safe
+Route order important       | Yes              | Yes
+
+ Dry Run Example – Case 1
+
+import express from "express";
+const app = express();
+
+app.use("/about/address", (req, res) => {
+  res.send("app.use() method called");
+});
+
+app.get("/address/pincode", (req, res) => {
+  res.send("app.get() method called");
+});
+
+Request:
+GET /address/pincode
+
+Execution flow:
+1) Express top se route check karega
+2) app.use("/about/address") milega
+3) app.use() har method ke liye valid hota hai
+4) Path ka last meaningful part = address
+5) User ka URL address se start ho raha hai
+6) app.use() execute ho gaya
+7) res.send() ke baad response close
+8) app.get() kabhi run hi nahi hua
+
+Output:
+app.use() method called
+
+ Dry Run Example – Case 2 (Order changed)
+
+import express from "express";
+const app = express();
+
+app.get("/address/pincode", (req, res) => {
+  res.send("app.get() method called");
+});
+
+app.use("/about/address", (req, res) => {
+  res.send("app.use() method called");
+});
+
+Request:
+GET /address/pincode
+
+Execution flow:
+1) Express top se route check karega
+2) app.get("/address/pincode") milega
+3) Method = GET (match)
+4) Path = /address/pincode (exact match)
+5) Dono condition match ho gayi
+6) app.get() execute ho gaya
+7) res.send() ke baad response close
+8) app.use() check hi nahi hua
+
+Output:
+app.get() method called
+
+-- Final One-Line Conclusion (Interview + GitHub)
+
+app.use() prefix-based matching karta hai aur HTTP method se independent hota hai,
+jabki app.get()/post()/put()/delete() exact path aur exact HTTP method par kaam karte hain.
+Express routes ko top-to-bottom evaluate karta hai.
+*/
