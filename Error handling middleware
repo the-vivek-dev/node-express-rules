@@ -1,0 +1,218 @@
+/**
+====================================================
+ Express.js – Error Handling Middleware
+====================================================
+
+----------------------------------------------------
+🔹 Sabse pehle samjho: Error Handling Middleware kya hota hai?
+
+Error Handling Middleware = Express ka special middleware
+jo application me aane wale errors ko handle karta hai.
+
+👉 Iska kaam:
+- server crash hone se bachana
+- client ko proper error response dena
+- code ko clean & professional banana
+
+----------------------------------------------------
+🔹 Error Handling Middleware ka SPECIAL syntax
+
+⚠️ Normal middleware:
+(req, res, next)
+
+⚠️ Error middleware:
+(err, req, res, next)
+
+👉 Pehla parameter **err** hona hi chahiye
+👉 Isi se Express samajhta hai ki ye error middleware hai
+
+----------------------------------------------------
+🔹 Error kaise aata hai Express me?
+
+Error 2 tareeke se aa sakta hai:
+
+1️⃣ Manually (developer khud error bheje)
+   next(new Error("Something went wrong"))
+
+2️⃣ Automatically (JS error)
+   - JSON parse error
+   - undefined access
+   - DB error etc.
+
+----------------------------------------------------
+🔹 Basic Error Handling Middleware Example
+
+import express from "express";
+const app = express();
+
+app.get("/error", (req, res, next) => {
+  const error = new Error("Something went wrong");
+  next(error); // error forward kiya
+});
+
+// Error handling middleware (ALWAYS last)
+app.use((err, req, res, next) => {
+  res.status(500).send(err.message);
+});
+
+----------------------------------------------------
+🔹 Dry Run (Step-by-step)
+
+Request:
+GET /error
+
+Execution flow:
+1) Request /error aayi
+2) Route match hua
+3) new Error() bana
+4) next(error) call hua
+5) Express samajh gaya ki error aaya hai
+6) Normal routes skip ho gaye
+7) Seedha error middleware pe gaya
+8) err.message response me bhej diya
+9) Response close
+
+Output:
+Something went wrong
+
+----------------------------------------------------
+🔹 IMPORTANT RULE (Golden Rule)
+
+❌ Error middleware ko kabhi upar mat likho  
+✅ Hamesha **sab routes ke baad** likho
+
+Kyun?
+👉 Express error middleware ko tabhi call karta hai
+jab usse pehle koi error aata hai
+
+----------------------------------------------------
+🔹 next(err) vs next()
+
+next()      → normal flow continue  
+next(err)   → error flow start  
+
+👉 Jaise hi next(err) likha:
+- Express direct error middleware pe jump karta hai
+- Beech ke normal routes skip ho jaate hain
+
+----------------------------------------------------
+🔹 Real-world example (Auth error)
+
+const authMiddleware = (req, res, next) => {
+  const isLoggedIn = false;
+
+  if (!isLoggedIn) {
+    return next(new Error("User not authenticated"));
+  }
+
+  next();
+};
+
+app.get("/profile", authMiddleware, (req, res) => {
+  res.send("User Profile");
+});
+
+----------------------------------------------------
+🔹 Dry Run (Auth error case)
+
+Request:
+GET /profile
+
+Execution flow:
+1) authMiddleware chala
+2) isLoggedIn = false
+3) next(new Error()) call hua
+4) Express error flow me chala gaya
+5) Controller skip ho gaya
+6) Error middleware execute hua
+7) Error response send hua
+
+----------------------------------------------------
+🔹 Global Error Handler (Professional way)
+
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+
+  res.status(statusCode).json({
+    success: false,
+    message: message,
+  });
+});
+
+----------------------------------------------------
+🔹 Custom Error Class (Industry standard)
+
+class AppError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+Usage:
+return next(new AppError("User not found", 404));
+
+----------------------------------------------------
+🔹 Async Error Problem (VERY IMPORTANT)
+
+❌ Ye error catch nahi hoga:
+app.get("/data", async (req, res) => {
+  throw new Error("Async error");
+});
+
+👉 Kyunki async error automatically next(err) me nahi jata
+
+----------------------------------------------------
+🔹 Async Error Solution (Correct way)
+
+app.get("/data", async (req, res, next) => {
+  try {
+    throw new Error("Async error");
+  } catch (err) {
+    next(err); // manually forward
+  }
+});
+
+----------------------------------------------------
+🔹 Shortcut (Production trick)
+
+const asyncHandler = (fn) => {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
+
+Usage:
+app.get(
+  "/data",
+  asyncHandler(async (req, res) => {
+    throw new Error("Async error");
+  })
+);
+
+----------------------------------------------------
+🔹 Folder Structure (Error handling included)
+
+project/
+│
+├── server.js
+├── routes/
+├── controllers/
+├── middlewares/
+│   └── error.middleware.js
+│
+└── utils/
+    └── AppError.js
+
+----------------------------------------------------
+ FINAL 
+
+1️⃣ Error middleware me 4 params hote hain  
+2️⃣ next(err) error flow start karta hai  
+3️⃣ Error middleware ALWAYS last me hota hai  
+4️⃣ Async errors ko manually handle karna padta hai  
+5️⃣ Global error handler = clean & safe app  
+
+====================================================
+*/
