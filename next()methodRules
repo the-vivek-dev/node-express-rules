@@ -1,0 +1,148 @@
+/**
+ Express.js Middleware – next() ka concept (Complete & Easy)
+
+🔹 next() kya hota hai?
+- next() ek function hota hai jo Express.js deta hai
+- Iska kaam hota hai request–response cycle ko
+  next middleware ya next route tak pahunchana
+
+👉 Simple words me:
+next() bolta hai → "bhai mera kaam ho gaya, ab aage wala route chalao"
+
+--------------------------------------------------
+
+🔹 Express.js middleware ka default behavior
+- Agar middleware me:
+  ❌ res.send() / res.json() / res.sendFile() call ho gaya
+  ❌ aur next() call nahi hua
+
+👉 To request wahi pe END ho jati hai
+👉 Aage ka route execute nahi hota
+
+--------------------------------------------------
+
+🔹 Middleware bina next() (Request yahin ruk jayegi)
+
+Example:
+app.use((req, res) => {
+  console.log("middleware called");
+});
+
+Request:
+GET /about
+
+Result:
+- Console me log print hoga
+- Lekin browser me response kabhi nahi milega
+- Request hang ho jayegi ❌
+
+Reason:
+- next() call nahi hua
+- response send nahi hua
+
+--------------------------------------------------
+
+🔹 Middleware ke saath next() (Correct way)
+
+Example:
+app.use((req, res, next) => {
+  console.log("middleware called");
+  next();
+});
+
+app.get("/about", (req, res) => {
+  res.send("About page");
+});
+
+Flow:
+1) Request aayi
+2) Middleware run hua
+3) next() call hua
+4) Control next route ko mila
+5) app.get("/about") execute hua
+6) Response send hua
+
+--------------------------------------------------
+
+🔹 Multiple middleware ka flow (VERY IMPORTANT)
+
+Example:
+app.use((req, res, next) => {
+  console.log("middleware 1");
+  next();
+});
+
+app.use((req, res, next) => {
+  console.log("middleware 2");
+  next();
+});
+
+app.get("/", (req, res) => {
+  res.send("Home page");
+});
+
+Request:
+GET /
+
+Output (console):
+middleware 1
+middleware 2
+
+Browser response:
+Home page
+
+--------------------------------------------------
+
+🔹 Middleware chain rule
+- Middleware **sequence me** execute hote hain
+- Har middleware ko decide karna hota hai:
+  ✅ next() call kare
+  ❌ ya response send karke flow stop kare
+
+--------------------------------------------------
+
+🔹 next() ke bina response kab dena chahiye?
+
+Example (Auth middleware):
+app.use("/admin", (req, res, next) => {
+  const isLoggedIn = false;
+
+  if (!isLoggedIn) {
+    res.send("Access Denied");
+  } else {
+    next();
+  }
+});
+
+Rule:
+- Condition fail → response send → next() mat call karo
+- Condition pass → next() call karo
+
+--------------------------------------------------
+
+🔹 app.use() + next() real-world use
+
+- Logging
+- Authentication
+- Authorization
+- Request validation
+- Error handling
+- Body parsing
+
+--------------------------------------------------
+
+🔹 Important rule (Interview GOLD)
+
+- next() call hua → next middleware / route execute
+- next() nahi call hua → request wahi stop
+- res.send() ke baad next() call nahi karna chahiye
+
+--------------------------------------------------
+
+ -- Final One-Line Conclusion
+
+next() Express.js ka control-transfer mechanism hai
+jo request ko ek middleware se dusre middleware ya route tak pahunchata hai.
+Agar next() call nahi hota aur response bhi send nahi hota,
+to request hang ho jati hai.
+*/
