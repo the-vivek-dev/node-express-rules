@@ -216,3 +216,66 @@ project/
 
 ====================================================
 */
+
+/**
+  Express.js Global Handlers Notes
+
+1️⃣ Problem we faced:
+
+- Pehle humne router ya app me catch-all route define kiya using '*' ya '/*':
+    router.all('*', (req, res) => {...})
+  ya
+    router.all('/*', (req, res) => {...})
+
+- Error aaya:
+    PathError [TypeError]: Missing parameter name at index 1: *
+
+- Reason:
+  Latest Express + Node + path-to-regexp parser strict ho gaya hai. 
+  '*' ya '/*' directly router.all() ya app.all() me pass karne se parser confuse ho jaata hai aur crash ho jaata hai.
+
+---
+
+2️⃣ Solution / Best Practice:
+
+- **404 Handler (Route Not Found)**
+
+  - Sirf undefined routes ko handle karne ke liye.
+  - **Router ke andar catch-all avoid karo**.
+  - Global app level pe use karo:
+    
+    app.use((req, res) => {
+      res.status(404).json({
+        status: "fail",
+        message: `Cannot find ${req.originalUrl} on this server`,
+      });
+    });
+
+  ✅ Ye production-safe aur real-world standard approach hai.
+  ✅ Koi '*' ya '/*' specify karne ki zarurat nahi.
+  ✅ Industry me sab aise use karte hain.
+
+- **Global Error Handler (Runtime Errors)**
+
+  - Runtime errors / thrown exceptions / DB errors ke liye use hota hai.
+  - Signature **must have 4 parameters**: (err, req, res, next)
+    
+    app.use((err, req, res, next) => {
+      console.error(err.stack);
+      res.status(err.statusCode || 500).json({
+        status: "error",
+        message: err.message || "Something went wrong!",
+      });
+    });
+
+  ✅ Agar 4 parameters nahi honge, Express is middleware ko normal samjhega aur error handle nahi hoga.
+  ✅ Ye real-world me har production app me hota hai.
+
+---
+
+  Real-world me dono use hote hain:
+
+- **404 handler** → jab route exist nahi karta
+- **Global error handler** → jab route me kuch galat ho jaye (DB error, validation fail, exception)
+*/
+
