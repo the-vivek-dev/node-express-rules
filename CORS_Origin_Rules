@@ -33,10 +33,10 @@
  * isliye browser ne request BLOCK kar di.
  *
  * CORS kya hota hai?
-
-  CORS = browser ka security rule
-  jo bolta hai:
-  Dusre origin se request tabhi allow hogi jab server bole: haan bhai allowed hai
+   CORS = Cross-Origin Resource Sharing
+   CORS = browser ka security rule
+   jo bolta hai:
+   Dusre origin se request tabhi allow hogi jab server bole: haan bhai allowed hai
  * --------------------------------------------------------
  *
  * ⚠️ Important baat:
