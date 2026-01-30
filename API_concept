@@ -72,3 +72,111 @@
  * ================================================================================
  */
 
+/**
+ * ======================= ROUTE PREFIX & SCALABILITY PROBLEM =======================
+ *
+ * ❌ Problem: Galat approach (No prefix in server.js)
+ *
+ * Agar server.js me routes ko is tarah use kiya:
+ *
+ *   app.use(userRoutes);
+ *
+ * Aur route files me directly likha:
+ *
+ *   router.get('/users', ...)
+ *   router.get('/products', ...)
+ *   router.get('/orders', ...)
+ *
+ * To URLs ban jati hain:
+ *
+ *   /users
+ *   /products
+ *   /orders
+ *
+ * ------------------------------------------------------------------------------
+ *
+ * 😈 Future problem kaha aati hai?
+ *
+ * Kuchh time baad company ya project ki requirement aayi:
+ *
+ *   "API ko versioned banana hai"
+      Company bolti hai -
+      Sab APIs /api/v1 se start honi chahiye
+
+ *    New required URLs:
+
+ *   /api/v1/users
+ *   /api/v1/products
+ *   /api/v1/orders
+ *
+ * ------------------------------------------------------------------------------
+ *
+ * ❌ Galat solution (Worst practice)
+ *
+ * Agar pehle se prefix use nahi kiya tha,
+ * to ab tumhe HAR route file me change karna padega:
+ *
+ *   router.get('/api/v1/users', ...)
+ *   router.get('/api/v1/products', ...)
+ *   router.get('/api/v1/orders', ...)
+ *
+ * 😵 Problem:
+ * - 20 route files = 20 jagah edit
+ * - High chance of bugs
+ * - Maintenance hard
+ * - Code messy
+ *
+ * 👉 ISI KO bolte hain SCALABILITY PROBLEM
+ *
+ * ------------------------------------------------------------------------------
+ *
+ * ✅ Best Practice / Correct Approach
+ *
+ * server.js me hi prefix define kar do:
+ *
+ *   app.use('/api/v1', userRoutes);
+ *
+ * Aur route files me simple paths rakho:
+ *
+ *   router.get('/users', ...)
+ *   router.get('/products', ...)
+ *   router.get('/orders', ...)
+ *
+ * ------------------------------------------------------------------------------
+ *
+ * ✅ Result:
+ *
+ * Automatically URLs ban jaati hain:
+ *
+ *   /api/v1/users
+ *   /api/v1/products
+ *   /api/v1/orders
+ *
+ * ------------------------------------------------------------------------------
+ *
+ *   Future advantage (Scalability)
+ *
+ * Kal ko naya version chahiye:
+ *
+ *   app.use('/api/v2', userRoutes);
+ *
+ * Purana version safe rahega:
+ *
+ *   /api/v1/users  → old clients
+ *   /api/v2/users  → new clients
+ *
+ * ✔️ Route files me ek line bhi change nahi karni padegi
+ * ✔️ Clean, scalable, professional architecture
+ *
+ * ------------------------------------------------------------------------------
+ *
+ *   Final Conclusion:
+ *
+ * - Prefix (like /api or /api/v1) hamesha server.js me lagao
+ * - Route files me sirf resource name likho (/users, /products)
+ * - Ye approach scalable, maintainable aur industry-standard hai
+ *
+ * ================================================================================
+ */
+
+
