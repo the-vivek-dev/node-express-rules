@@ -37,6 +37,9 @@
    CORS = browser ka security rule
    jo bolta hai:
    Dusre origin se request tabhi allow hogi jab server bole: haan bhai allowed hai
+
+ * In Sort : 
+   Cross (dusra) Origin se Resource (data) share karna
  * --------------------------------------------------------
  *
  * ⚠️ Important baat:
