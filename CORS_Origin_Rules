@@ -1,16 +1,64 @@
 /**
- * ❌ CORS ERROR EXPLANATION (STEP BY STEP)
- *
- * Error:
+*  CORS download / install kaise kare (Express / Node.js)
+*
+* CORS koi browser ka feature nahi hota,
+* ye ek npm package hota hai jo backend me install hota hai.
+*
+* Step 1️⃣: CORS install karo
+*
+* npm install cors
+*
+* ya
+*
+* npm i cors
+*
+*
+*  Step 2️⃣: CORS import karo (Express app me)
+*
+* import cors from "cors";
+*
+*
+*  Step 3️⃣: CORS middleware use karo
+*
+* app.use(cors());
+*
+* Iska matlab:
+* 👉 Backend response me ye header add karega:
+*
+* Access-Control-Allow-Origin: *
+*
+* Browser ye header dekh kar request accept karega.
+*
+*
+*  Step 4️⃣: Specific origin allow karna ho to
+*
+* app.use(
+*   cors({
+*     origin: "http://localhost:5173"
+*   })
+* );
+*
+* Iska matlab:
+* 👉 Sirf isi origin se aane wali request browser accept karega
+*
+*
+*  Yaad rakhne wali baat
+* CORS backend me install hota hai
+* par kaam browser ke liye karta hai
+* sirf response headers add karta hai
+*
+*
+* ❌ CORS ERROR EXPLANATION (STEP BY STEP)
+*
+* Error:
    Access to XMLHttpRequest at 'http://localhost:3000/api/v1/users' from
    origin 'http://localhost:5173' has been blocked by
    CORS policy: No 'Access-Control-Allow-Origin'
    header is present on the requested resource.
  *
  * --------------------------------------------------------
- *
- * Problem kya hai?
- *
+ *  Problem kya hai?
+
  * Frontend chal raha hai:
  * http://localhost:5173   (Vite + React)
  *
