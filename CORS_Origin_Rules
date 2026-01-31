@@ -463,4 +463,100 @@
  * Permanent cheez:
  * - cors middleware backend me lagana
  */
+========================================================
+/**
+ * Core difference (seedha answer)
+ *
+ * 1️⃣ app.use(cors()) ka matlab kya?
+ *
+ * app.use(cors());
+ *
+ *
+ * 👉 Iska matlab:
+ *
+ * Access-Control-Allow-Origin: *
+ *
+ *
+ * ✔ Browser sabhi frontend origins se aane wali request accept karega
+ * ✔ Chahe request aaye:
+ *
+ * http://localhost:5173
+ *
+ * http://localhost:3000
+ *
+ * http://example.com
+ *
+ * http://randomsite.xyz
+ *
+ * 👉 koi restriction nahi
+ *
+ * ⚠️ Production me unsafe ho sakta hai
+ * ⚠️ Cookies / auth ke saath allowed nahi hota
+ *
+ * --------------------------------------------------------
+ *
+ * 2️⃣ app.use(cors({ origin: "http://localhost:5173" })) ka matlab kya?
+ *
+ * app.use(
+ *   cors({
+ *     origin: "http://localhost:5173",
+ *   })
+ * );
+ *
+ *
+ * 👉 Iska matlab:
+ *
+ * Access-Control-Allow-Origin: http://localhost:5173
+ *
+ *
+ * ✔ Sirf isi frontend URL se aane wali request browser accept karega
+ *
+ * ❌ Agar request aaye:
+ *
+ * http://localhost:3000
+ *
+ * http://localhost:8080
+ *
+ * http://example.com
+ *
+ * 👉 Browser CORS error de dega
+ *
+ * --------------------------------------------------------
+ *
+ * 🤔 “Ye kitno ko allow karega?”
+ *
+ * 👉 Answer simple hai:
+ *
+ * Code                                         Kitne frontend allow
+ * cors()                                      🌍 Sabko (ALL origins)
+ * cors({ origin: "http://localhost:5173" })   ✅ Sirf 1 frontend
+ *
+ * --------------------------------------------------------
+ *
+ * Multiple frontend allow karna ho to?
+ *
+ * app.use(
+ *   cors({
+ *     origin: [
+ *       "http://localhost:5173",
+ *       "http://localhost:3000",
+ *     ],
+ *   })
+ * );
+ *
+ *
+ * 👉 Browser sirf inhi dono se aane wali request accept karega
+ *
+ * --------------------------------------------------------
+ *
+ *  Golden rule (yaad rakh)
+ *
+ *   * = sab allowed
+ *
+ * specific URL = sirf wahi allowed
+ *
+ * decision browser leta hai
+ *
+ * backend sirf headers add karta hai
+ */
 
