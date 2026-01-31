@@ -60,7 +60,8 @@
  * 304 caching se related hai,
  * lekin main problem CORS hi hai.
  * CORS fix karte hi ye issue bhi normal ho jaata hai.
- *
+
+ * 304 browser ka caching behaviour hai, lekin request pehle hi CORS me fail ho chuki hoti hai
  * --------------------------------------------------------
  *
  * ✅ FINAL SOLUTION (CORRECT WAY)
@@ -80,9 +81,7 @@
  *
  * Ab backend kya bolega browser ko?
 
-  Response headers me ye jayega:
-  Access-Control-Allow-Origin: * ya fir Access-Control-Allow-Origin: http://localhost:5173
- * yani ki backend response me ye header jayega:
+ * backend response me ye header jayega:
  * Access-Control-Allow-Origin: * ya fir Access-Control-Allow-Origin: http://localhost:5173
  *
  * Browser bolega:
