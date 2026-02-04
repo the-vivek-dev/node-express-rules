@@ -198,3 +198,119 @@ Therefore:
 
 ===========================================================================================
 */
+
+/*
+============Example code=============================================================
+Below is a COMPLETE WORKING EXAMPLE that demonstrates:
+- Route-level middleware execution
+- Top-to-bottom flow
+- Successful response termination
+- Error flow using next(err)
+- 404 middleware behavior
+- Error-handling middleware behavior
+-------------------------------------------------------------------------------------------
+*/
+
+import express from "express";
+
+const app = express();
+
+/*
+Middleware 1:
+Checks whether age is provided and valid.
+If response is sent here, request life cycle ends here.
+*/
+const m1 = (req, res, next) => {
+  const age = req.query.age;
+
+  if (!age) {
+    return res
+      .status(400)
+      .json({ message: "please provide the age for login!" });
+  }
+
+  if (age < 18) {
+    return res
+      .status(400)
+      .json({ message: "age must be greater than 17!" });
+  }
+
+  // Moves request forward
+  next();
+};
+
+/*
+Middleware 2:
+Checks whether user identity is valid.
+*/
+const m2 = (req, res, next) => {
+  const isAuthenticUser = req.query.id;
+
+  if (!isAuthenticUser) {
+    return res.status(400).json({
+      message: "please provide your identity for login!",
+    });
+  }
+
+  if (isAuthenticUser !== "admin82") {
+    return res.status(400).json({
+      message: "You are not an authentic user!",
+    });
+  }
+
+  // Moves request forward
+  next();
+};
+
+/*
+Middleware 3 (Error Generator):
+This middleware intentionally creates an error
+to demonstrate error-handling flow.
+*/
+const errCheck = (req, res, next) => {
+  const e = req.query.e;
+
+  if (e != 2) {
+    const err = new Error("something went wrong!");
+    next(err); // Forward-only jump to error middleware
+  }
+
+  next();
+};
+
+/*
+Final Route Handler:
+This executes ONLY if all middlewares pass successfully
+and no response or error occurs earlier.
+*/
+app.get("/login", m1, m2, errCheck, (req, res) => {
+  res.status(200).json({ login: "login successfully." });
+});
+
+/*
+404 Middleware:
+Runs only when no route matches the requested path.
+This must be written AFTER all routes.
+*/
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Route not found",
+    url: req.originalUrl,
+  });
+});
+
+/*
+Error-Handling Middleware (ALWAYS LAST):
+This runs only when next(err) is called.
+Express reaches here by moving FORWARD only.
+*/
+app.use((err, req, res, next) => {
+  res.status(500).json({
+    message: err.message,
+  });
+});
+
+app.listen(3000, () => {
+  console.log("server connected.");
+});
+
