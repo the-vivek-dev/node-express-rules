@@ -512,4 +512,9 @@ console.log(11)
  *   One-line yaad rakhne ka rule:
  * - ES Module me __dirname chahiye → import.meta.url + fileURLToPath()
  */
+=============================================================
+❗ Frontend validation sirf UX ke liye hota hai
+❗ Backend validation security ke liye hota hai
+❗ DB schema validation data integrity ke liye hota hai
 
+Kabhi bhi frontend pe bharosa mat karo.
