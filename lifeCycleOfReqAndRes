@@ -1,5 +1,5 @@
 /*
-================= Execution Life Cycle of Request & Response in Express.js =================
+=====Hindi Version============= Execution Life Cycle of Request & Response in Express.js =================
 
 Express.js ek water pipe ki tarah kaam karta hai.
 Ye ek ONE-WAY ROAD hota hai, jisme request sirf ek hi direction me travel karti hai,
@@ -99,7 +99,7 @@ Isliye:
 ===========================================================================================
 */
 /*
-================= Execution Life Cycle of Request & Response in Express.js =================
+=======English Version========== Execution Life Cycle of Request & Response in Express.js =================
 
 Express.js works like a water pipe.
 It is a ONE-WAY ROAD, where a request can travel only in one direction.
