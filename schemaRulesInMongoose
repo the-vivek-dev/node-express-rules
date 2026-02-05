@@ -1,0 +1,206 @@
+/*
+========================================= Rule of Schema =======================================
+
+Jab tum aisa schema banate ho:
+
+const userSchema = new mongoose.Schema(
+  {},
+  { timestamps: true }
+);
+
+To iska matlab kya hua?
+
+Tumne Mongoose ko indirectly ye bola:
+
+"Mere document me koi bhi field allowed hi nahi hai"
+
+Matlab:
+Schema totally empty hai.
+Isme name, email, age, kuch bhi defined nahi hai.
+
+-----------------------------------------------------
+
+Ab jab tum ye data insert karne ki koshish karte ho:
+
+await User.create({
+  first_name: "Vivek",
+  email: "abc@gmail.com"
+});
+
+To Mongoose kya karta hai step-by-step?
+
+1️⃣ Sabse pehle schema check karta hai
+
+2️⃣ Dekhta hai:
+
+Schema me "first_name" defined hai? ❌ Nahi
+Schema me "email" defined hai? ❌ Nahi
+
+3️⃣ To Mongoose kya karega?
+
+❌ Un sab fields ko ignore kar dega
+Kyuki schema me allowed hi nahi hai.
+
+4️⃣ Fir MongoDB me kya save hoga?
+
+{
+  _id: ObjectId(...),
+  createdAt: ...,
+  updatedAt: ...
+}
+
+Bas.
+Sirf ID aur timestamps.
+Baaki sab fields gayab 😄
+
+-----------------------------------------------------
+
+-> Ye behaviour ka naam hai:
+
+"STRICT MODE" (Default ON hota hai)
+
+Mongoose by default:
+
+strict: true
+
+Matlab:
+
+Jo fields schema me defined nahi hain,
+wo DB me save nahi hongi.
+
+-----------------------------------------------------
+
+->  Example se FEEL karo
+
+---------------------------
+CASE 1 — EMPTY SCHEMA
+---------------------------
+
+const userSchema = new mongoose.Schema({});
+
+Insert data:
+
+await User.create({
+  name: "Vivek",
+  age: 22
+});
+
+Mongoose check karega:
+
+Schema me name hai? ❌
+Schema me age hai? ❌
+
+To DB me save hoga:
+
+{
+  _id: ...
+}
+
+Sab fields gayab 😄
+
+-----------------------------------------------------
+
+---------------------------
+CASE 2 — SCHEMA DEFINED
+---------------------------
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  age: Number
+});
+
+Same data insert karo:
+
+await User.create({
+  name: "Vivek",
+  age: 22
+});
+
+Ab schema match ho gaya.
+
+DB me save hoga:
+
+{
+  _id: ...
+  name: "Vivek",
+  age: 22
+}
+
+-----------------------------------------------------
+
+-> SECRET TRICK (Advanced knowledge)
+
+Agar tum chahte ho:
+
+Schema empty ho
+Fir bhi jo data aaye wo save ho jaye
+
+To strict mode OFF kar do:
+
+const userSchema = new mongoose.Schema(
+  {},
+  { strict: false, timestamps: true }
+);
+
+Ab ye run karo:
+
+await User.create({
+  name: "Vivek",
+  city: "Darbhanga"
+});
+
+DB me save hoga:
+
+{
+  _id: ...
+  name: "Vivek",
+  city: "Darbhanga"
+}
+
+Matlab:
+Ab schema check nahi karega.
+
+-----------------------------------------------------
+
+-> LEKIN INDUSTRY ME KYA HOTA HAI?
+
+❌ strict: false almost kabhi use nahi hota
+
+✔️ Proper schema define kiya jata hai
+
+Kyuki:
+
+- Data control me rehta hai
+- Security better hoti hai
+- Garbage data DB me nahi jata
+- Structure maintain rehta hai
+- Bugs kam hote hain
+
+-----------------------------------------------------
+
+-> TUMHARE CASE ME EXACTLY KYA HUA THA?
+
+Tumne schema blank banaya tha:
+
+{}
+
+To Mongoose ne ye samjha:
+
+"Is model me koi field allowed hi nahi hai"
+
+Isliye:
+
+Jo bhi data bheja → ignore
+Sirf _id save hua
+
+Isliye tumhe laga:
+Data insert hi nahi ho raha.
+
+Actually:
+Insert ho raha tha,
+par fields save nahi ho rahi thi.
+
+-----------------------------------------------------
+Note : Mongoose saves only those fields which are defined in the schema because strict mode is enabled by default.
+
+*/
