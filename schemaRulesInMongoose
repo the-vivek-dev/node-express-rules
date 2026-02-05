@@ -204,3 +204,55 @@ par fields save nahi ho rahi thi.
 Note : Mongoose saves only those fields which are defined in the schema because strict mode is enabled by default.
 
 */
+=================================================================
+/*
+  MOST IMPORTANT RULE : 
+
+MongoDB + Mongoose ka basic rule:
+
+"Jo fields tum schema me define karoge,
+sirf wahi fields database me save hongi."
+
+Baaki sab automatically ignore ho jayengi.
+
+-----------------------------------------------------
+
+Example:
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String
+});
+
+Ab agar tum ye data bhejo:
+
+await User.create({
+  name: "Vivek",
+  email: "vivek@gmail.com",
+  age: 22,
+  city: "Darbhanga"
+});
+
+To Mongoose kya karega?
+
+Schema check karega:
+
+name  → schema me hai ✅ save hoga  
+email → schema me hai ✅ save hoga  
+age   → schema me nahi ❌ ignore  
+city  → schema me nahi ❌ ignore  
+
+DB me actual save kya hoga?
+
+{
+  _id: ...,
+  name: "Vivek",
+  email: "vivek@gmail.com"
+}
+
+age aur city gayab 😄
+
+-----------------------------------------------------
+Note :  Only those fields get stored in MongoDB which are defined in the Mongoose schema. All extra fields are ignored because strict mode is ON by default.
+
+*/
