@@ -22,7 +22,7 @@ likhne ki zarurat nahi padti.
 Kyuki resolver already raw ZodError ko clean aur field-wise error object me convert kar deta hai.
 
 
-🔹 Backend me problem kyun aati hai?
+- Backend me problem kyun aati hai?
 
 Backend me hum direct Zod use karte hain:
 
@@ -67,7 +67,7 @@ Backend:
 Direct Zod use → raw error structure milta hai
 
 
-🔹 Real life example samjho:
+- Real life example samjho:
 
 Backend = Raw milk 
 Frontend = Tea 
