@@ -1,0 +1,2 @@
+Note : When we use multer for multipart/form-data, it automatically parses both files and text fields.
+So req.body works even without express.json(). express.json() is only required for application/json data.
