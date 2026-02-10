@@ -1,0 +1,44 @@
+===================================== (Rule 1) ================================================
+
+/**
+ * .any() ka sense kya hai:
+ *
+ * .fields() me tum pehle se define kar dete ho ki kaun-kaun se fieldname allowed hain.
+ * Example: singleImageFile, singleDocumentFile, multipleImageFile
+ * Agar koi unknown field aata hai to Multer khud hi "Unexpected field" error de deta hai.
+ *
+ * .any() me Multer koi bhi fieldname accept kar leta hai.
+ * Matlab pehle se koi restriction nahi hota fieldname par.
+ *
+ * Fir fieldname valid hai ya nahi — ye check tumhara fileFilter karega.
+ *
+ * Isliye .any() use karne par ye code run karega:
+ *
+ * else {
+ *   const err = new Error("Unknown file field!");
+ *   err.type = "error";
+ *   cb(err, false);
+ * }
+ *
+ * Kyunki Multer pehle se block nahi karega, control fileFilter tak pahunch jayega.
+ *
+ * .fields() se .any() me convert:
+ *
+ * Pehle:
+ * export const uploadFiles = upload.fields([
+ *   { name: "singleImageFile", maxCount: 1 },
+ *   { name: "singleDocumentFile", maxCount: 1 },
+ *   { name: "multipleImageFile", maxCount: 3 },
+ * ]);
+ *
+ * Baad me:
+ * export const uploadFiles = upload.any();
+ *
+ * Bas itna hi change.
+ *
+ * Ab behavior:
+ * - Koi bhi fieldname aa sakta hai
+ * - Valid fieldname → fileFilter allow karega
+ * - Unknown fieldname → fileFilter ka else block chalega
+ */
+==============================================================================
