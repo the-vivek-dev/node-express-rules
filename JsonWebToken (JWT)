@@ -188,6 +188,13 @@ verify() method:
 2. Header + Payload + Server Secret se naya signature banata hai
 3. Dono signatures ko compare karta hai
 4. Match hone par payload return karta hai
+===============================================================
+Signature:
+
+❌ Secret ka converted form nahi
+❌ Secret ka encrypted version nahi
+
+✔ Secret + Message ka cryptographic proof hai
 
 ======================================================================
 bhai ye JWT signature banta kaise h kis chij ke help se banta h ?
