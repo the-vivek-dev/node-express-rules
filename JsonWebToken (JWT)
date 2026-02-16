@@ -1,3 +1,97 @@
+
+JWT verify() – Internal Working Notes
+
+Line:
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+Explanation:
+
+jwt ek library hai aur uska verify() ek method hai jo total 2 arguments accept karta hai:
+
+1. First argument:
+
+   * User ke request se aaya hua token
+
+2. Second argument:
+
+   * Server ka secret key (JWT_SECRET)
+
+---
+
+Internally verify() kaise kaam karta hai:
+
+Step 1:
+Server sabse pehle token ko 3 parts me divide karta hai:
+
+header.payload.signature
+
+Yani:
+
+* header
+* payload
+* signature
+
+Step 2:
+Server inme se 2 cheeze use karta hai:
+
+* header
+* payload
+
+Aur verify() ke second parameter me diya gaya secret key use karta hai
+(joki server ka original secret hota hai).
+
+Step 3:
+Server ek naya signature generate karta hai using:
+
+serverSignature = HMACSHA256(
+base64UrlEncode(header) + "." + base64UrlEncode(payload),
+SERVER_SECRET_KEY
+)
+
+Yani:
+
+* header + payload ko dobara encode karke
+* server ke secret key se ek naya signature banaya jata hai.
+
+Step 4:
+Ab server compare karta hai:
+
+token ka original signature
+VS
+server ne jo naya signature banaya (serverSignature)
+
+Agar dono match karte hain:
+✔ Token valid hai
+✔ Data tamper nahi hua hai
+✔ verify() payload return kar deta hai
+
+Agar match nahi karte:
+❌ Token invalid
+❌ verify() error throw karega
+
+Step 5:
+Isliye:
+
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+Yaha:
+
+* Agar signature match ho jata hai,
+  to "decoded" variable me token ka payload store ho jata hai.
+
+* Agar match nahi hota,
+  to kuch bhi store nahi hota,
+  balki error milta hai (Invalid token / Unauthorized).
+
+Summary:
+verify() method:
+
+1. Token ko todta hai (header, payload, signature)
+2. Header + Payload + Server Secret se naya signature banata hai
+3. Dono signatures ko compare karta hai
+4. Match hone par payload return karta hai
+
+======================================================================
 bhai ye JWT signature banta kaise h kis chij ke help se banta h ?
 
 ✅ Short Answer
