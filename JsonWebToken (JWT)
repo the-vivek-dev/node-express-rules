@@ -170,3 +170,532 @@ Encoded Payload
 Secret Key
 
 Algorithm un teenon ko combine karke cryptographic hash banata hai.
+==========================================================================
+ 1️⃣ JWT Structure – Andar kya hota hai?
+
+JWT 3 parts me hota hai:
+
+HEADER.PAYLOAD.SIGNATURE
+
+
+Example token:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.
+eyJpZCI6IjY1NjY1NiIsInVzZXJuYW1lIjoidml2ZWsiLCJpYXQiOjE3MTIzNCwiZXhwIjoxNzEyMzV9
+.
+sdjksdfkjsdfkjsdfkjsdfkjsdf
+
+ Part 1 – HEADER
+
+Base64 encoded hota hai.
+
+Decode karne pe milta hai:
+
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+
+Meaning:
+
+alg → Hashing algorithm (HS256)
+
+typ → Token type
+
+ Part 2 – PAYLOAD
+
+Yahi important data hota hai.
+
+Decode karne pe:
+
+{
+  "id": "656565",
+  "username": "vivek",
+  "iat": 171234,
+  "exp": 171235
+}
+
+
+Meaning:
+
+id → user id
+
+username → user name
+
+iat → issued at
+
+exp → expiry time
+
+⚠️ IMPORTANT:
+Payload encrypted nahi hota.
+Sirf Base64 encoded hota hai.
+Koi bhi decode kar sakta hai.
+
+ Part 3 – SIGNATURE
+
+Yahi asli security hai.
+
+Ye generate hota hai:
+
+HMACSHA256(
+  base64UrlEncode(header) + "." + base64UrlEncode(payload),
+  SECRET_KEY
+)
+
+
+Yahi verify karta hai ki token tampered hai ya nahi.
+
+2️⃣ Kya JWT Decode kar sakte hain?
+
+Haan bhai 
+
+Koi bhi website jaise jwt.io pe jaake token paste karo.
+
+Wo header aur payload decode kar dega.
+
+Lekin:
+
+❌ Secret nahi milega
+❌ Signature recreate nahi kar paoge
+
+ 3️⃣ Agar Hacker Payload Change Kare To?
+
+Suppose original payload:
+
+{
+  "id": "656565",
+  "username": "vivek"
+}
+
+
+Hacker change kar de:
+
+{
+  "id": "1",
+  "username": "admin"
+}
+
+
+Aur fir token bana de manually.
+
+Kya hoga?
+
+👉 Signature mismatch ho jayega
+👉 jwt.verify() fail karega
+👉 "Invalid token" milega
+
+Because hacker ke paas SECRET_KEY nahi hai.
+
+ 4️⃣ Agar Secret Weak Ho To?
+
+Suppose tumne secret rakha:
+
+JWT_SECRET=123
+
+
+Ab hacker brute force try karega:
+
+123
+password
+admin
+test
+
+
+Agar guess kar liya:
+
+ Ab wo fake token bana sakta hai
+Admin access le sakta hai
+
+Isliye production me secret aisa hona chahiye:
+
+kjsdfkjsdfkjsdfkjsdfkjsdfkjsdfkj234234234234
+
+
+Random + long.
+
+5️⃣ JWT Verify Internally Kya Karta Hai?
+jwt.verify(token, secret)
+
+
+Internally ye karta hai:
+
+Token ke header + payload ko read karta hai
+
+Same algorithm use karke signature dobara generate karta hai
+
+Compare karta hai:
+
+Generated signature
+
+Token wala signature
+
+Agar match:
+ valid
+
+Agar mismatch:
+❌ invalid
+
+ 6️⃣ JWT Safe Hai Ya Dangerous?
+Safe hai agar:
+
+Secret strong ho
+
+HTTPS use karo
+
+Short expiry rakho
+
+Refresh token use karo
+
+Dangerous ho sakta hai agar:
+
+LocalStorage me store karo
+
+Secret weak ho
+
+Expiry na ho
+
+7️⃣ Session vs JWT Real Difference
+
+Session:
+
+Server memory me data
+
+
+JWT:
+
+Token ke andar hi data
+Server sirf verify karta hai
+
+
+Isliye JWT scalable hai (microservices me best).
+
+ Sabse Important Security Rule
+
+JWT me kabhi bhi:
+
+❌ Password store mat karo
+❌ Sensitive data store mat karo
+❌ Large data store mat karo
+
+Sirf:
+
+user id
+role
+username
+=======================================================================
+ 1️⃣ routes/auth.js – Deep Dry Run
+import express from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+
+const router = express.Router();
+
+✅ Yaha kya ho raha hai?
+
+express.Router() → mini app bana rahe ho
+
+bcrypt → password compare karega
+
+jsonwebtoken → token banayega
+
+User → MongoDB model
+
+REGISTER FLOW DRY RUN
+router.post("/register", async (req, res) => {
+
+👉 Step 1: Request aayi Postman se
+
+POST /api/auth/register
+
+Body:
+
+{
+ "username": "vivek",
+ "password": "123"
+}
+
+const { username, password } = req.body;
+
+
+👉 Express ne req.body me data daal diya.
+
+Ab:
+
+username = "vivek"
+password = "123"
+
+const existingUser = await User.findOne({ username });
+
+
+👉 MongoDB check karega:
+
+kya username already database me hai?
+
+Agar mil gaya:
+
+if (existingUser) return res.status(400).json({ message: "User already exists" });
+
+
+Server yahin ruk jaayega ❌
+
+👉 Step 2: Password Hashing
+const hashedPassword = await bcrypt.hash(password, 10);
+
+
+Yaha kya hota hai?
+
+"123" direct save nahi hota
+
+bcrypt usko hash bana deta hai
+
+Example:
+
+$2b$10$sdjksdfksdfksdfk....
+
+
+👉 Ye secure version hai password ka.
+
+const newUser = new User({
+  username,
+  password: hashedPassword
+});
+
+
+MongoDB object ready ho gaya.
+
+await newUser.save();
+
+
+User database me save ho gaya ✅
+
+res.status(201).json({ message: "User registered successfully" });
+
+
+Register complete 🎉
+
+ LOGIN FLOW – DEEP DRY RUN
+router.post("/login", async (req, res) => {
+
+
+POST /api/auth/login
+
+Body:
+
+{
+ "username": "vivek",
+ "password": "123"
+}
+
+👉 Step 1: Extract data
+const { username, password } = req.body;
+
+👉 Step 2: User find karo
+const user = await User.findOne({ username });
+
+
+Database me search karega:
+
+Agar user nahi mila:
+
+return res.status(400).json({ message: "Invalid credentials" });
+
+👉 Step 3: Password compare
+const isMatch = await bcrypt.compare(password, user.password);
+
+
+Yaha kya hota hai?
+
+"123" ko bcrypt internally hash karega
+
+Fir database wale hash se compare karega
+
+Agar match nahi hua:
+
+return res.status(400).json({ message: "Invalid credentials" });
+
+👉 Step 4: JWT Token Generate
+const token = jwt.sign(
+  { id: user._id, username: user.username },
+  process.env.JWT_SECRET,
+  { expiresIn: "1h" }
+);
+
+
+ Yaha important kaam ho raha hai.
+
+jwt.sign ke 3 parts:
+
+Payload
+
+{ id: user._id, username: user.username }
+
+
+Ye data token ke andar jayega.
+
+Secret key
+
+JWT_SECRET
+
+
+Ye private key hai. Isse hi verify hoga.
+
+Expiry
+
+1 hour
+
+Token kaisa dikhega?
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+
+JWT 3 parts me hota hai:
+
+HEADER.PAYLOAD.SIGNATURE
+
+res.json({
+  message: "Login successful",
+  token: token
+});
+
+
+Client ko token mil gaya 🎉
+
+LOGOUT DRY RUN
+router.post("/logout", (req, res) => {
+  res.json({ message: "Logout successful (client side token delete karo)" });
+});
+
+
+ JWT me server logout nahi karta.
+
+Logout ka matlab:
+
+Client token delete kar de.
+
+Bas.
+
+ 2️⃣ middlewares/authMiddleware.js – Deep Dry Run
+import jwt from "jsonwebtoken";
+
+export const isAuthenticated = (req, res, next) => {
+
+
+Ye middleware har protected route se pehle chalega.
+
+Example:
+
+app.get("/home", isAuthenticated, ...)
+
+🔁 Flow Start
+
+User GET /home karega.
+
+Header me bhejna hoga:
+
+Authorization: Bearer eyJhbGc...
+
+👉 Step 1: Header read karo
+const authHeader = req.headers.authorization;
+
+
+Agar header hi nahi mila:
+
+if (!authHeader) {
+  return res.status(401).json({ message: "No token provided" });
+}
+
+
+Server yahin ruk gaya ❌
+
+👉 Step 2: Token extract karo
+
+Header format hota hai:
+
+Bearer TOKEN
+
+
+Isliye:
+
+const token = authHeader.split(" ")[1];
+
+
+Split karega:
+
+["Bearer", "TOKEN"]
+
+
+Index 1 = actual token
+
+👉 Step 3: Token Verify
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+
+Yaha kya hota hai?
+
+Token ka signature check hota hai
+
+Secret key match hoti hai
+
+Expiry check hoti hai
+
+Agar sab sahi:
+
+decoded =
+
+{
+ id: "...",
+ username: "vivek",
+ iat: 171234,
+ exp: 171235
+}
+
+👉 Step 4: User data request me daal do
+req.user = decoded;
+
+
+Ab controller me access kar sakte ho:
+
+req.user.username
+
+👉 Step 5: next()
+next();
+
+
+Matlab:
+
+Authentication successful. Ab actual route chale.
+
+❌ Agar token galat hua
+catch (err) {
+  return res.status(401).json({ message: "Invalid token" });
+}
+
+ FULL FLOW SUMMARY
+
+Register → password hashed
+
+Login → password compare
+
+JWT token generate
+
+Client token store karega
+
+Protected route me header bhejega
+
+Middleware verify karega
+
+Agar valid → next()
+
+Sabse Important Concept
+
+Session me:
+
+Server user ko yaad rakhta hai
+
+
+JWT me:
+
+Token ke andar hi user data hota hai
+Server sirf verify karta hai
