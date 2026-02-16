@@ -1,4 +1,102 @@
+JWT sign() – Internal Working Notes
 
+Code:
+
+// JWT Token
+const token = jwt.sign(
+{ id: user._id, username: user.username },
+process.env.JWT_SECRET,
+{ expiresIn: "1h" }
+);
+
+Explanation:
+
+Yaha "token" ek normal variable hai jisme jwt.sign() method ka return value store hota hai.
+Ye koi class ya object nahi hai — ye ek string hoti hai (JWT token string).
+
+jwt ek library hai aur uska sign() ek method hai jo token generate karta hai.
+
+---
+
+jwt.sign() total 3 arguments leta hai:
+
+1. First Argument (Payload):
+   { id: user._id, username: user.username }
+
+   * Isme user ka data store hota hai
+   * Is data ko hi payload bolte hain
+   * Ye data token ke andar save hota hai
+   * Baad me verify() ke time isi data ko decode karke wapas milta hai
+
+2. Second Argument (Secret Key):
+   process.env.JWT_SECRET
+
+   * Ye server ka secret password hota hai
+   * Iska use signature banane ke liye hota hai
+   * Isko kisi user ko nahi bataya jata
+   * Ye hi token ko secure banata hai
+
+3. Third Argument (Options Object):
+   { expiresIn: "1h" }
+
+   * Ye optional hota hai
+   * Isme token ki setting di jati hai
+   * expiresIn ka matlab:
+     Token 1 hour ke baad expire ho jayega
+
+---
+
+Internally kya hota hai:
+
+Step 1:
+Payload ko JSON me convert karke base64Url me encode kiya jata hai.
+
+Step 2:
+Header automatically banaya jata hai, jisme hota hai:
+
+* Algorithm (HS256)
+* Type (JWT)
+
+Step 3:
+Header + Payload ko combine karke server secret se signature banaya jata hai:
+
+signature = HMACSHA256(
+base64UrlEncode(header) + "." + base64UrlEncode(payload),
+SECRET_KEY
+)
+
+Step 4:
+Final token 3 parts ko jod kar banta hai:
+
+token = header.payload.signature
+
+---
+
+Isliye:
+
+const token = jwt.sign(...)
+
+Yaha "token" variable me ek complete JWT string store hoti hai
+jisme 3 parts hote hain:
+
+* header
+* payload
+* signature
+
+---
+
+Summary:
+
+jwt.sign() ka kaam:
+
+1. Payload ko lena
+2. Secret key se signature banana
+3. Expiry set karna
+4. Final JWT token string generate karke return karna
+
+Aur wahi token "token" variable me store ho jata hai.
+
+================================================================
 JWT verify() – Internal Working Notes
 
 Line:
