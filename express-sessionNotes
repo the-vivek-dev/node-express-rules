@@ -1,0 +1,55 @@
+session ya fir token create karna kyu jaruri h , or ye jaruri h kya ,
+agar na kare to kya hoga or yadi kare to kya hoga ?
+
+1️⃣ Session ya Token create karna – Kyu zaruri hai?
+
+Problem without session/token:
+
+Jab user login karta hai, server ko kaise pata chale ki ye request usi user ki hai jo login hua tha?
+
+HTTP protocol stateless hota hai → har request independent hoti hai.
+
+Agar session/token na ho, server ko har request me baar-baar username/password verify karna padega → impossible aur insecure.
+
+Solution:
+
+Session: Server ek record banata hai jaise {userId: 123, loggedIn: true} aur client ko session id deta hai.
+
+Token (JWT): Server encoded token deta hai jisme user info hota hai, client har request me bhejta hai.
+
+Isse server ko pata chal jata hai ki ye request authenticated user se aa rahi hai ya nahi.
+
+2️⃣ Session / Token create karna – zaruri hai?
+
+✅ Yes, almost always required agar aapko:
+
+User authentication maintain karna hai.
+
+Restricted pages ya APIs ko secure karna hai.
+
+Multiple requests me user ko baar-baar login karne se bachana hai.
+
+❌ Agar na kare:
+
+Har request pe user ko username/password dena padega → user experience kharab.
+
+Security risk: Server ko verify karne ka koi safe way nahi → koi bhi user restricted pages access kar sakta hai.
+
+Website “stateless” reh jayegi → login ka sense hi nahi rahega.
+
+3️⃣ Session/Token use karne ke fayde
+Feature	Without Session/Token	With Session/Token
+User identification	Har request me login dena padega	Ek baar login ke baad server jaanta hai user ka identity
+Security	Low, easily hijack ho sakta hai	High, server/encoded token verify karta hai
+User experience	Bad, baar-baar login karna padega	Smooth, ek baar login → continuous access
+Restricted pages access	Impossible to manage safely	Easy, middleware se control hota hai
+4️⃣ Short me samjho
+
+Session/Token = “Proof of Login”
+
+Server ye proof dekh ke decide karta hai:
+
+✅ User authorized hai → access milega
+
+
+❌ User unauthorized → access deny
