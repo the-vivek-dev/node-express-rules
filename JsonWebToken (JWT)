@@ -1,0 +1,172 @@
+bhai ye JWT signature banta kaise h kis chij ke help se banta h ?
+
+✅ Short Answer
+
+👉 Signature 3 cheezon se banta hai:
+
+Encoded Header
+
+Encoded Payload
+
+Secret Key
+
+Algorithm bhi use hota hai (jaise HS256), lekin core input ye 3 cheezein hoti hain.
+
+  Exact Formula Kya Hai?
+
+JWT signature ka formula hota hai:
+
+HMACSHA256(
+   base64UrlEncode(header) + "." + base64UrlEncode(payload),
+   SECRET_KEY
+)
+
+
+Matlab:
+
+Step 1
+
+Header ko Base64Url me encode karo
+
+Step 2
+
+Payload ko Base64Url me encode karo
+
+Step 3
+
+Dono ko dot se join karo:
+
+encodedHeader.encodedPayload
+
+Step 4
+
+Ab is pure string ko SECRET KEY ke saath HMAC-SHA256 algorithm me daalo
+
+👉 Jo output milega wahi signature hai.
+
+ Important: 2 Cheez ya 3 Cheez?
+
+Log confuse ho jaate hain.
+
+❌ Galat soch:
+
+"Signature sirf secret se banta hai"
+
+❌ Ya:
+
+"Sirf header + payload se banta hai"
+
+✅ Sahi jawab:
+
+Signature banne ke liye:
+
+(header + payload)  +  secret key
+
+
+Matlab:
+
+Header & Payload → message
+
+Secret → key
+
+Algorithm → HMACSHA256
+
+Total 3 cheez involved hain.
+
+ Example se Samjho
+
+Maan lo:
+
+Header:
+
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+
+Payload:
+
+{
+  "id": "101",
+  "username": "vivek"
+}
+
+
+Secret:
+
+mySecret123
+
+Step 1: Encode Header
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+
+Step 2: Encode Payload
+eyJpZCI6IjEwMSIsInVzZXJuYW1lIjoidml2ZWsi
+
+Step 3: Combine
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.
+eyJpZCI6IjEwMSIsInVzZXJuYW1lIjoidml2ZWsi
+
+Step 4: Apply HMACSHA256 with secret
+HMACSHA256( above_string , "mySecret123" )
+
+
+Output:
+
+XyZabc123dfkjsdf...
+
+
+Yahi signature ban gaya.
+
+ Very Important Concept
+
+Signature banate waqt:
+
+❗ Secret key visible nahi hoti token me
+❗ Sirf header.payload visible hota hai
+❗ Signature verify karta hai ki data change hua ya nahi
+
+ Agar Payload Change Kare To?
+
+Suppose hacker payload change kare:
+
+username: "admin"
+
+
+Ab:
+
+Header same
+Secret same
+Payload change
+
+To signature change ho jayega ❌
+
+Isliye verification fail ho jaata hai.
+
+ Real Deep Understanding
+
+Technically signature banta hai:
+
+hash( message + secret )
+
+
+Yaha:
+
+message = header.payload
+
+secret = private key
+
+Algorithm = HMAC-SHA256
+
+ Final Clear Answer
+
+👉 Signature 3 cheez se banta hai:
+
+Encoded Header
+
+Encoded Payload
+
+Secret Key
+
+Algorithm un teenon ko combine karke cryptographic hash banata hai.
