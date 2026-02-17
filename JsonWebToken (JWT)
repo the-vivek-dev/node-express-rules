@@ -943,3 +943,40 @@ JWT Token Expiration Notes:
    - JWT immutable hota hai
    - Expiration check **server ke verification logic** me hota hai
    - Browser me token rahega, par server pe request reject hoga if expired
+==============================================================================
+agar mai laptop ka current time agar change kar du, to fir
+token to valid ho jayega agar mai laptop ka current time ko expiry time se chhota kar du to ?
+
+JWT Token Verification & Server Time Notes:
+
+1️⃣ Server vs Client Time:
+
+- JWT token verification server ke current time se hoti hai, client ke time se nahi.
+- Server time = us machine ka system clock jahan Node.js app chal rahi hai.
+- Client (browser/laptop) ka time change karne se token valid nahi hota real-world scenario me.
+
+2️⃣ Local Development Exception:
+
+- Agar Node.js server local machine (apna laptop) pe chal raha ho:
+  - Date.now() server ka current time return karega → ye laptop ka time hota hai
+  - Laptop ka time change karne se JWT verification affect ho sakta hai
+- Ye sirf local testing ke liye hai, production server me ye kaam nahi karega.
+
+3️⃣ Client Time Effect:
+
+- JWT token browser/localStorage/cookie me store hota hai.
+- Token ka string immutable hai → client ke time change se token expire ya valid nahi hota.
+- Expired token → server verify karte waqt reject hoga, chahe client ka clock change ho ya nahi.
+
+4️⃣ Real-World Production:
+
+- Server aur client alag machines pe hote hain → server ka time hi authority hai.
+- Professional servers me usually NTP (Network Time Protocol) use hota hai → server ka clock accurate rehta hai
+- JWT verify sirf server ke clock ke hisaab se hota hai.
+
+5️⃣ Shortcut:
+
+- Local testing: server aur laptop same machine → time change effect de sakta hai
+- Production: server aur client alag → client time ka koi effect nahi
+- JWT verification = server authority
+
