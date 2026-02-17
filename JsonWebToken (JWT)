@@ -898,3 +898,48 @@ JWT me:
 
 Token ke andar hi user data hota hai
 Server sirf verify karta hai
+==========================================================
+
+JWT Token Expiration Notes:
+
+1️⃣ Token me expiration kaise store hota hai:
+   - Jab token generate hota hai using jwt.sign(), hum expiresIn option dete hain.
+   - JWT payload me automatically ek field add hoti hai:
+        {
+          id: user._id,
+          username: user.username,
+          iat: <issued_at_timestamp>,
+          exp: <expiry_timestamp>
+        }
+   - "exp" = token ka expiry time (seconds since epoch)
+   - Ye timestamp immutable hai, token string change nahi hoti.
+
+2️⃣ Current time ka matlab:
+   - Jab server request receive karta hai aur token verify karta hai:
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+   - JWT library internally current server time check karti hai:
+        current_time = Math.floor(Date.now() / 1000)
+   - Ye current_time se compare hota hai decoded.exp ke saath.
+
+3️⃣ Expiration check ka logic:
+   - Agar current_time > decoded.exp → token expired → server reject karega
+   - Agar current_time <= decoded.exp → token valid → request continue karega
+   - Note: Token ka string browser me same rahega, par server verification fail ho jayega.
+
+4️⃣ Key difference Session vs JWT expiration:
+   - Session: Server store karta hai, maxAge expire hone par DB se document remove ho jata hai
+   - JWT: Client (browser) me stored, expire hone ke baad bhi string same rahegi, server verify kar ke invalid declare karega
+
+5️⃣ Example flow:
+   - Token generate: 1 PM, expires: 2 PM
+   - Browser me token = "abcdedfgh"
+   - 3 PM me request bheja
+   - Server check:
+        current_time = 3 PM > decoded.exp = 2 PM
+        → reject request → Invalid token
+   - Browser token same hai, lekin authorization fail.
+
+6️⃣ Shortcut:
+   - JWT immutable hota hai
+   - Expiration check **server ke verification logic** me hota hai
+   - Browser me token rahega, par server pe request reject hoga if expired
