@@ -222,3 +222,39 @@ Agar browser cookies automatically send hi na kare kabhi,
 to kya CSRF naam ki cheez exist karti?
 
 Yes ya No?
+
+=============================================================================
+Agar browser kabhi bhi cookies/credentials automatically send na karta, to classic CSRF exist hi nahi karta.
+
+Core logic ko 4 bullets me seal kar lo
+
+CSRF ka engine = browser ka auto-attach behavior
+Jab request kisi domain par jati hai, browser us domain ki cookies khud se laga deta hai.
+Attacker isi auto-attach ko misuse karta hai.
+
+Attack kaise hota hai (essence)
+
+Victim login hai → browser me cookie already saved.
+
+Victim evil site kholta hai → wo site bank.com ko request bhejwa deti hai.
+
+Browser: “ye bank.com ke liye request hai” → cookie auto-attach.
+
+Server: valid cookie dikhi → action allow.
+
+LocalStorage me kyun nahi hota
+LocalStorage ki value browser khud se request me nahi jodta.
+Jab tak tum JS se Authorization header add na karo, token nahi jata.
+Evil site tumhara header bana nahi sakti → request me credentials missing → server reject.
+
+JWT ko cookie me rakhne par CSRF kyun wapas aata
+Kyunki JWT bhi phir cookie ban gaya.
+Cookie = auto-attach.
+Auto-attach = attacker tumhare browser se request bhejwa sakta hai.
+Isliye JWT-in-cookie ke saath CSRF protection lagate hain.
+
+Ek line ka master rule
+
+Auto-send credentials (cookie) → CSRF possible
+
+Manual-send credentials (header/localStorage) → CSRF fail
