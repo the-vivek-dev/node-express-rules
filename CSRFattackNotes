@@ -1,0 +1,224 @@
+ Sabse pehle ek line ka CORE RULE
+
+CSRF attack tabhi possible hai jab attacker tumhare browser se request bhejwa sake WITHOUT tumhari permission.
+
+Ab main bataunga:
+
+Ye kab possible hota hai
+
+Kab possible nahi hota
+
+Aur kyu
+
+Step-by-Step Core Mechanism
+Goal of attacker
+
+Attacker chahta hai:
+
+Tumhare account se koi action ho jaye
+
+
+Jaise:
+
+Money transfer
+
+Password change
+
+Email change
+
+Case 1: Jab Cookie use ho rahi ho (AUTO SEND)
+
+Tum login ho:
+
+bank.com
+
+
+Browser me cookie saved hai:
+
+sessionId=abc123
+
+
+Ab tum evil site open karte ho:
+
+evil.com
+
+
+Us site me hidden code hai:
+
+<form action="https://bank.com/transfer" method="POST">
+  <input name="amount" value="5000">
+</form>
+
+<script>
+ document.forms[0].submit()
+</script>
+
+ Yaha asli magic hota hai
+
+Browser sochta hai:
+
+Request bank.com ko ja rahi hai
+Mere paas uski cookie hai
+Main automatically attach kar deta hoon
+
+Aur request ban jati hai:
+
+POST /transfer
+Cookie: sessionId=abc123
+
+Server kya dekhta hai?
+
+Server ko kya dikh raha hai?
+
+Valid sessionId ✔
+
+Logged in user ✔
+
+Server kya sochega?
+
+Ye Vivek hi hai
+
+Aur action ho jayega 😨
+
+ CORE LOGIC
+
+Attacker ne:
+
+Cookie chori nahi ki
+
+Password nahi pata
+
+Sirf:
+
+Tumhare browser ko use karke request bhej di
+
+Aur browser ne:
+
+Apne aap credentials attach kar diye
+
+Yahi CSRF ka janam hai.
+
+ Case 2: Jab LocalStorage + Header use ho
+
+Ab maan lo JWT localStorage me hai:
+
+localStorage:
+token = xyz123
+
+
+Aur request aise jati hai:
+
+Authorization: Bearer xyz123
+
+
+IMPORTANT POINT 👇
+
+Browser:
+
+LocalStorage ko auto attach nahi karta
+
+Header khud se nahi banata
+
+Ab attacker kya karega?
+
+evil.com se request bhejega:
+
+POST /transfer
+
+
+But header nahi hoga:
+
+Authorization: ❌ missing
+
+
+Server bolega:
+
+User ka token kahan hai?
+
+Request reject ❌
+
+CORE DIFFERENCE (Sabse important)
+Situation	Browser kya karta hai?	Result
+Cookie	Auto attach	CSRF possible
+LocalStorage	Auto attach nahi	CSRF fail
+ Deep Core Truth
+
+CSRF ka relation:
+
+Cookie se nahi
+
+Session se nahi
+
+JWT se nahi
+
+CSRF ka relation sirf ek cheez se hai:
+
+Browser automatically kya bhejta hai?
+
+Real reason aur bhi deep hai
+
+Browser ka design hi aisa hai:
+
+Jab request jaye:
+
+bank.com
+
+
+To browser bolta hai:
+
+Is domain ki cookies mere paas hain
+Main bhej deta hoon
+
+Browser ye check nahi karta:
+
+Request bank.com se aayi?
+
+Ya evil.com se?
+
+Ye hi vulnerability hai.
+
+CSRF token ka kaam kya?
+
+Server bolta hai:
+
+Agar request asli page se aayi hai, to ek secret code bhi bhejo
+
+Attacker:
+
+Ye secret nahi jaanta
+
+Isliye request fail
+
+Ekdum RAW core analogy
+
+Socho:
+
+Tumhare ghar ka darwaza fingerprint se khulta hai.
+
+Tum ghar me ho.
+
+Koi bahar wala:
+
+Tumhara haath pakad ke
+
+Fingerprint machine pe rakh de
+
+Door open ho jayega.
+
+Machine sochegi:
+
+Fingerprint match ho gaya
+
+Ye hi CSRF hai.
+
+Fingerprint = Cookie
+Tumhara haath = Browser
+
+Ab main tumse ek core logical sawaal poochta hoon
+
+Dhyaan se soch ke jawab dena:
+
+Agar browser cookies automatically send hi na kare kabhi,
+to kya CSRF naam ki cheez exist karti?
+
+Yes ya No?
