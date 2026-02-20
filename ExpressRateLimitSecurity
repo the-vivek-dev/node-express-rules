@@ -155,3 +155,56 @@ Default me memory store use karta hai
 
 Production me Redis store use karte hain
 ===================================================================
+
+ *  Express Rate Limit – Notes
+ *
+ * 1️⃣ Basic Concept:
+ * express-rate-limit ek middleware hai jo ek specific time window me
+ * limited number of requests allow karta hai per IP address.
+ *
+ * 2️⃣ Current Configuration:
+ *
+ * windowMs: 1000 * 60
+ * → Iska matlab hai 1 minute (60 seconds) ka time window.
+ *
+ * max: 5
+ * → Ek IP address 1 minute me maximum 5 requests bhej sakta hai.
+ *
+ * message:
+ * → Agar limit cross ho jaye to ye message client ko bheja jayega.
+ *
+ *
+ * 3️⃣ Exact Time Example (5:00 AM Case):
+ *
+ * Agar first request 5:00:00 AM pe aati hai,
+ * to time window chalega:
+ *
+ * 5:00:00 AM  →  5:00:59 AM tak
+ *
+ * Is duration ke andar:
+ * ✅ 5 requests allowed hain
+ * ❌ 6th request block ho jayegi (Status: 429)
+ *
+ *
+ * 4️⃣ Reset Kab Hoga?
+ *
+ * Jaise hi 1 minute complete hoga:
+ *
+ * 5:01:00 AM
+ *
+ * Counter reset ho jayega,
+ * aur fir se 5 requests allowed ho jayengi.
+ *
+ *
+ * 5️⃣ Important Understanding:
+ *
+ * - Time window first request ke time se start hota hai.
+ * - Limit IP address ke basis pe apply hoti hai.
+ * - 429 status code "Too Many Requests" ke liye use hota hai.
+ *
+ *
+ * 6️⃣ Simple Definition:
+ *
+ * "Ek IP address 1 minute me maximum 5 baar server ko request bhej sakta hai.
+ * 6th request usi window ke andar block ho jayegi.
+ * 1 minute complete hone ke baad counter reset ho jayega."
