@@ -1,0 +1,157 @@
+ Internal Working of express-rate-limit
+
+Socho tumhara server ek gate hai 
+Aur har request ek aadmi hai jo gate pe aa raha hai.
+
+express-rate-limit kya karta hai?
+
+👉 Gate pe ek counter register rakh deta hai.
+
+ Step 1: User ki Pehchaan (IP Address)
+
+Jab request aati hai:
+
+req.ip
+
+Middleware check karta hai:
+
+Ye request kis IP address se aayi hai?
+
+Example:
+
+192.168.1.10
+Step 2: Memory me Data Store karta hai
+
+Internally ye ek object jaisa structure banata hai:
+
+{
+  "192.168.1.10": {
+      count: 5,
+      firstRequestTime: 1700000000000
+  }
+}
+
+Matlab:
+
+Ye IP 5 request bhej chuka hai
+
+Aur uska window start time kya tha
+
+Step 3: Time Window Check karta hai
+
+Har request pe ye check hota hai:
+
+1️⃣ Kya current time - firstRequestTime > windowMs ?
+
+Agar haan:
+👉 Counter reset ho jayega
+
+Agar nahi:
+👉 Count +1 ho jayega
+
+🚫 Step 4: Limit Cross Hui ya Nahi?
+if (count > max) {
+   block request
+}
+
+Agar limit cross hui:
+
+Status 429 bhejega
+
+Message bhejega: "Too many requests"
+
+Flow Diagram Samjho
+
+User Request ➜
+IP Check ➜
+Memory Me Count Dekho ➜
+Time Check ➜
+Limit Cross?
+✔ No ➜ Allow
+❌ Yes ➜ Block (429)
+
+ Important Secret
+
+By default ye MemoryStore use karta hai.
+
+Matlab:
+
+Server restart hua ➜ sab count reset
+
+Multiple servers pe kaam nahi karega
+
+Production me Redis use karte hain
+
+- Production Me Kya Hota Hai?
+
+Large apps me:
+
+express-rate-limit + Redis
+
+Redis me data store hota hai
+Isse:
+
+Multiple servers me sync hota hai
+
+Restart pe data nahi udta
+
+ Ab Real Internals Code Concept
+
+Actually internally kuch aisa logic hota hai:
+
+const store = {};
+
+function rateLimit(req, res, next) {
+   const ip = req.ip;
+   const now = Date.now();
+
+   if (!store[ip]) {
+      store[ip] = { count: 1, startTime: now };
+   } else {
+      if (now - store[ip].startTime < windowMs) {
+         store[ip].count++;
+      } else {
+         store[ip] = { count: 1, startTime: now };
+      }
+   }
+
+   if (store[ip].count > max) {
+      return res.status(429).send("Too many requests");
+   }
+
+   next();
+}
+
+Bas isi concept pe kaam karta hai.
+
+ Ek Advanced Baat
+
+Ye sirf count nahi karta
+Ye headers bhi bhejta hai:
+
+X-RateLimit-Limit
+X-RateLimit-Remaining
+Retry-After
+
+Taaki client ko pata chale:
+
+Kitni request allowed hai
+
+Kitni bachi hai
+
+Kab fir try kar sakta hai
+
+ Short Summary (Interview Ready)
+
+express-rate-limit:
+
+IP ke basis pe request count karta hai
+
+Ek time window me max limit set karta hai
+
+Limit cross hone pe 429 error deta hai
+
+Default me memory store use karta hai
+
+Production me Redis store use karte hain
+===================================================================
