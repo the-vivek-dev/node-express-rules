@@ -4,7 +4,7 @@
 ====================================================
 
 ----------------------------------------------------
-🔹 Sabse pehle samjho: Error Handling Middleware kya hota hai?
+ Sabse pehle samjho: Error Handling Middleware kya hota hai?
 
 Error Handling Middleware = Express ka special middleware
 jo application me aane wale errors ko handle karta hai.
@@ -15,7 +15,7 @@ jo application me aane wale errors ko handle karta hai.
 - code ko clean & professional banana
 
 ----------------------------------------------------
-🔹 Error Handling Middleware ka SPECIAL syntax
+  Error Handling Middleware ka SPECIAL syntax
 
 ⚠️ Normal middleware:
 (req, res, next)
@@ -27,7 +27,7 @@ jo application me aane wale errors ko handle karta hai.
 👉 Isi se Express samajhta hai ki ye error middleware hai
 
 ----------------------------------------------------
-🔹 Error kaise aata hai Express me?
+  Error kaise aata hai Express me?
 
 Error 2 tareeke se aa sakta hai:
 
@@ -40,7 +40,7 @@ Error 2 tareeke se aa sakta hai:
    - DB error etc.
 
 ----------------------------------------------------
-🔹 Basic Error Handling Middleware Example
+  Basic Error Handling Middleware Example
 
 import express from "express";
 const app = express();
@@ -56,7 +56,7 @@ app.use((err, req, res, next) => {
 });
 
 ----------------------------------------------------
-🔹 Dry Run (Step-by-step)
+  Dry Run (Step-by-step)
 
 Request:
 GET /error
@@ -76,7 +76,7 @@ Output:
 Something went wrong
 
 ----------------------------------------------------
-🔹 IMPORTANT RULE (Golden Rule)
+  IMPORTANT RULE (Golden Rule)
 
 ❌ Error middleware ko kabhi upar mat likho  
 ✅ Hamesha **sab routes ke baad** likho
@@ -86,7 +86,7 @@ Kyun?
 jab usse pehle koi error aata hai
 
 ----------------------------------------------------
-🔹 next(err) vs next()
+  next(err) vs next()
 
 next()      → normal flow continue  
 next(err)   → error flow start  
@@ -96,7 +96,7 @@ next(err)   → error flow start
 - Beech ke normal routes skip ho jaate hain
 
 ----------------------------------------------------
-🔹 Real-world example (Auth error)
+  Real-world example (Auth error)
 
 const authMiddleware = (req, res, next) => {
   const isLoggedIn = false;
@@ -113,7 +113,7 @@ app.get("/profile", authMiddleware, (req, res) => {
 });
 
 ----------------------------------------------------
-🔹 Dry Run (Auth error case)
+  Dry Run (Auth error case)
 
 Request:
 GET /profile
@@ -128,7 +128,7 @@ Execution flow:
 7) Error response send hua
 
 ----------------------------------------------------
-🔹 Global Error Handler (Professional way)
+  Global Error Handler (Professional way)
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -141,7 +141,7 @@ app.use((err, req, res, next) => {
 });
 
 ----------------------------------------------------
-🔹 Custom Error Class (Industry standard)
+  Custom Error Class (Industry standard)
 
 class AppError extends Error {
   constructor(message, statusCode) {
@@ -154,7 +154,7 @@ Usage:
 return next(new AppError("User not found", 404));
 
 ----------------------------------------------------
-🔹 Async Error Problem (VERY IMPORTANT)
+  Async Error Problem (VERY IMPORTANT)
 
 ❌ Ye error catch nahi hoga:
 app.get("/data", async (req, res) => {
@@ -164,7 +164,7 @@ app.get("/data", async (req, res) => {
 👉 Kyunki async error automatically next(err) me nahi jata
 
 ----------------------------------------------------
-🔹 Async Error Solution (Correct way)
+  Async Error Solution (Correct way)
 
 app.get("/data", async (req, res, next) => {
   try {
@@ -175,7 +175,7 @@ app.get("/data", async (req, res, next) => {
 });
 
 ----------------------------------------------------
-🔹 Shortcut (Production trick)
+  Shortcut (Production trick)
 
 const asyncHandler = (fn) => {
   return (req, res, next) => {
@@ -192,7 +192,7 @@ app.get(
 );
 
 ----------------------------------------------------
-🔹 Folder Structure (Error handling included)
+  Folder Structure (Error handling included)
 
 project/
 │
