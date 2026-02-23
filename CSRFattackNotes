@@ -1,3 +1,208 @@
+ * ================================
+ * COMPLETE CSRF NOTES (Learning Purpose)
+ * ================================
+ *
+ * 1) CSRF KYA HAI?
+ * --------------------------------
+ * CSRF (Cross-Site Request Forgery) ek attack hai jisme attacker
+ * victim ke browser ka use karke kisi trusted website (jaise bank.com)
+ * par unwanted request bhej deta hai.
+ *
+ * Condition:
+ * - Victim already login ho
+ * - Browser automatically session cookie attach kare
+ *
+ * --------------------------------------------------
+ *
+ * 2) CSRF ATTACK KA BASIC FLOW
+ * --------------------------------
+ * 1. User bank.com par login hai.
+ * 2. User evil.com open karta hai.
+ * 3. evil.com hidden form ya request ke through bank.com ko POST bhejta hai.
+ * 4. Browser automatically bank.com ki cookies attach kar deta hai.
+ * 5. Agar CSRF protection nahi hai → attack successful.
+ *
+ * --------------------------------------------------
+ *
+ * 3) CSRF PROTECTION KA CORE IDEA
+ * --------------------------------
+ * Server har user/session ke liye ek unique secret generate karta hai.
+ *
+ * Is secret se:
+ *   - Ek _csrf cookie generate hoti hai (secret store hota hai)
+ *   - Ek CSRF token generate hota hai (frontend me use hota hai)
+ *
+ * Jab request aati hai:
+ *   - Server cookie ka secret leta hai
+ *   - Request se token leta hai
+ *   - Dono ka relation verify karta hai
+ *
+ * Match → Success
+ * Not Match → Reject
+ *
+ * --------------------------------------------------
+ *
+ * 4) IMPORTANT SECURITY TRUTH
+ * --------------------------------
+ * Hacker victim ke browser ka _csrf secret nahi jaanta.
+ *
+ * Kyun?
+ * - Same-Origin Policy
+ * - Cookies domain-bound hoti hain
+ * - Har user ko alag secret milta hai
+ * - Secret random aur cryptographically strong hota hai
+ *
+ * --------------------------------------------------
+ *
+ * 5) COOKIE BEHAVIOR (IMPORTANT)
+ * --------------------------------
+ * Jab request bank.com ko jaati hai:
+ *   - Sirf bank.com ki cookies attach hoti hain
+ *   - evil.com ki cookies nahi jaati
+ *
+ * Agar 100 cookies bank.com ki stored hain
+ * aur domain + path match karta hai
+ * to sab cookies attach ho sakti hain.
+ *
+ * --------------------------------------------------
+ *
+ * 6) COOKIE ATTRIBUTES (SECURITY VIEW)
+ * --------------------------------
+ *
+ * Name=Value
+ * Domain
+ * Path
+ * Expires / Max-Age
+ * Secure
+ * HttpOnly
+ * SameSite
+ *
+ * --------------------------------
+ * HttpOnly:
+ * - JS se access nahi hoti
+ * - XSS me session theft se bachata hai
+ *
+ * Secure:
+ * - Sirf HTTPS me send hoti hai
+ *
+ * SameSite:
+ * - CSRF me helpful
+ *
+ * SameSite=Strict
+ *   → Cross-site request me cookie nahi jayegi
+ *
+ * SameSite=Lax
+ *   → Some cross-site GET me jayegi
+ *
+ * SameSite=None
+ *   → Cross-site me bhi jayegi (Secure required)
+ *
+ * --------------------------------------------------
+ *
+ * 7) SameSite vs CSRF Token
+ * --------------------------------
+ * SameSite:
+ *   - Browser-level protection
+ *   - Cookie attach hone se pehle check hota hai
+ *
+ * CSRF Token:
+ *   - Server-level verification
+ *   - Browser version pe depend nahi karta
+ *   - Most reliable protection
+ *
+ * Real world me dono use kiye jate hain.
+ *
+ * --------------------------------------------------
+ *
+ * 8) CORS vs CSRF (CONFUSION CLEAR)
+ * --------------------------------
+ * CORS:
+ *   - JS ko response read karne deta ya block karta hai
+ *   - Cookie attach hone ko control nahi karta
+ *
+ * CSRF:
+ *   - Cookie auto-attach behavior ka misuse karta hai
+ *
+ * Even agar:
+ *   app.use(cors())
+ * ho,
+ * tab bhi CSRF possible hai agar token validation nahi hai.
+ *
+ * --------------------------------------------------
+ *
+ * 9) CSRF TOKEN KAHAN SET HOTA HAI?
+ * --------------------------------
+ * CSRF token frontend me:
+ *
+ * - Hidden input field me
+ * - Meta tag me
+ * - JavaScript variable me
+ *
+ * Example:
+ * <input type="hidden" name="_csrf" value="TOKEN">
+ *
+ * --------------------------------------------------
+ *
+ * 10) REQUEST ME TOKEN KAHAN SE AA SAKTA HAI?
+ * --------------------------------
+ * CSRF middleware usually token check karta hai:
+ *
+ * 1. req.body._csrf
+ * 2. req.query._csrf
+ * 3. req.headers['csrf-token']
+ * 4. req.headers['xsrf-token']
+ * 5. req.headers['x-csrf-token']
+ * 6. req.headers['x-xsrf-token']
+ *
+ * Default field name often: "_csrf"
+ *
+ * --------------------------------------------------
+ *
+ * 11) DOUBLE SUBMIT COOKIE PATTERN
+ * --------------------------------
+ * Ek cookie me secret hota hai.
+ * Ek token request body/header me hota hai.
+ * Server dono compare karta hai.
+ *
+ * --------------------------------------------------
+ *
+ * 12) PER USER SECRET CONCEPT
+ * --------------------------------
+ * Har user/session ke liye:
+ *
+ * User A → SECRET_A
+ * User B → SECRET_B
+ * Hacker → SECRET_H
+ *
+ * Secret alag hone ki wajah se:
+ * Hacker ka token victim ke secret se match nahi karega.
+ *
+ * --------------------------------------------------
+ *
+ * 13) FINAL SECURITY SETUP (RECOMMENDED)
+ * --------------------------------
+ *
+ * Set-Cookie:
+ *   Secure;
+ *   HttpOnly;
+ *   SameSite=Strict;
+ *   Path=/;
+ *
+ * + CSRF Token Validation
+ *
+ * Layered security approach use karna chahiye.
+ *
+ * --------------------------------------------------
+ *
+ * FINAL CONCLUSION
+ * --------------------------------
+ * CSRF attack isliye fail hota hai kyunki:
+ * Attacker victim ke browser ka secret nahi jaanta.
+ *
+ * SameSite helpful hai.
+ * Lekin CSRF token verification sabse reliable protection hai.
+ *
+
 ===========================English version========================================
 
  * Assume there is a website called bank.com where an authentic user has created an account.
