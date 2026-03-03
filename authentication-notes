@@ -169,3 +169,95 @@ Server sirf verify karta hai.
 Server ko user ko yaad nahi rakhna padta.
 **********************************************************************/
 
+/**********************************************************************
+
+QUESTION:
+Bhai kya hoga agar ham jab JWT ko cookies me store karte hain
+aur cookies ko signed cookies bana dete hain
+to shayad ye aur secure ho jayega right?
+
+ANSWER:
+
+Short Answer:
+
+→ Thoda sa extra protection milega
+→ Lekin real security me koi major difference nahi padega
+
+Explanation:
+
+1) JWT already secret key se sign hota hai.
+   Agar koi JWT ke andar ka data change kare,
+   to jwt.verify() fail ho jayega.
+
+   Matlab JWT khud hi tamper-proof hota hai.
+
+2) Signed cookie kya karta hai?
+
+   Signed cookie cookie ki value change hui ya nahi
+   ye verify karta hai.
+
+   Agar browser me manually cookie change kare,
+   to server pakad lega.
+
+3) Agar tum JWT ko signed cookie bana do:
+
+   res.cookie("token", jwtToken, { signed: true })
+
+   To system me 2 layer verification ho jayegi:
+
+   Layer 1:
+   → Cookie signature verify hoga
+
+   Layer 2:
+   → JWT signature verify hoga
+
+   Matlab double verification.
+
+4) Lekin logically socho:
+
+   Agar attacker JWT modify karega:
+
+   → Pehle cookie signature fail karega
+   → Ya JWT verification fail karega
+
+   Dono case me request reject ho jayegi.
+
+   To signed cookie se koi naya major security benefit nahi milta.
+
+5) Real world practice (MERN stack me):
+
+   res.cookie("token", jwtToken, {
+     httpOnly: true,
+     secure: true,
+     sameSite: "strict"
+   })
+
+   Bas itna kaafi hota hai.
+
+6) Real security kis se aati hai?
+
+   → httpOnly
+   → secure
+   → sameSite
+   → short expiry
+   → refresh token strategy
+
+   Signed cookie se main security gain nahi hota.
+
+Simple Example:
+
+JWT = already lock wala dabba 🔐
+Signed cookie = us dabbe pe ek aur lock 🔐
+
+Par andar ka maal already secure hai.
+
+FINAL:
+
+JWT ko signed cookie banana galat nahi hai,
+lekin necessary bhi nahi hai,
+aur industry standard bhi nahi hai.
+
+Normal HttpOnly secure cookie enough hai.
+
+**********************************************************************/
+
