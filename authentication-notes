@@ -85,3 +85,87 @@ User account banaye → register/signup
 User enter kare → login/signin
 
 User exit kare → logout
+===================================================================================
+
+/**********************************************************************
+==================== SESSION BASED AUTHENTICATION ====================
+
+1) User login button click karta hai
+   → Email aur password server ko bhejta hai.
+
+2) Server database me check karta hai
+   → Password match hua? ✔️
+
+3) Server ek SESSION create karta hai.
+   Example server side me:
+   {
+     sessionId: "abc123",
+     userId: "vivek01"
+   }
+
+   Ye data server ke RAM / Redis / session store me save hota hai.
+
+4) Server browser ko ek COOKIE bhejta hai.
+   Cookie me sirf sessionId hota hai:
+
+   sessionId = abc123
+
+   Cookie browser me store hoti hai.
+
+------------------ Protected Route Access ------------------
+
+5) Jab user koi protected page open karta hai:
+   → Browser automatically cookie attach karta hai.
+
+   sessionId = abc123
+
+6) Server cookie se sessionId leta hai
+   → Apne session storage me check karta hai.
+   → Agar session mil gaya ✔️
+   → User authenticated.
+
+FINAL:
+Session me real data server me hota hai.
+Browser me sirf sessionId hota hai.
+Server ko user ko yaad rakhna padta hai.
+**********************************************************************/
+
+/**********************************************************************
+======================= JWT BASED AUTHENTICATION ======================
+
+1) User login button click karta hai
+   → Email aur password server ko bhejta hai.
+
+2) Server database me check karta hai
+   → Password match hua? ✔️
+
+3) Server ek JWT TOKEN generate karta hai.
+   Token ke andar hi data hota hai:
+
+   {
+     userId: "vivek01",
+     exp: "7 days"
+   }
+
+4) Server token browser ko bhejta hai.
+   Token store ho sakta hai:
+   → HttpOnly cookie me
+   → Ya localStorage me
+
+------------------ Protected Route Access ------------------
+
+5) Jab user protected page open karta hai:
+   → Browser token server ko bhejta hai
+     (cookie ya Authorization header me)
+
+6) Server JWT ko verify karta hai secret key se.
+   → Agar valid hai ✔️
+   → User authenticated.
+
+FINAL:
+JWT me server ko kuch store nahi karna padta.
+Token ke andar hi data hota hai.
+Server sirf verify karta hai.
+Server ko user ko yaad nahi rakhna padta.
+**********************************************************************/
+
