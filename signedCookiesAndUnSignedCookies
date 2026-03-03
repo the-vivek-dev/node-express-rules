@@ -1,0 +1,185 @@
+/**********************************************************************
+====================== COOKIE PARSER COMPLETE NOTES ======================
+
+QUESTION 1:
+app.use(cookieParser()) kya karta hai?
+
+ANSWER:
+
+Ye middleware browser se aane wali cookies ko read karta hai
+aur unko parse karke req.cookies object me convert kar deta hai.
+
+Example:
+
+Browser se aayi cookie:
+Cookie: token=abc123
+
+Agar cookieParser() nahi lagaya:
+
+console.log(req.cookies)
+// undefined
+
+Tum cookie access hi nahi kar paoge.
+
+Agar lagaya:
+
+app.use(cookieParser())
+
+Ab:
+
+console.log(req.cookies)
+
+Output:
+{ token: "abc123" }
+
+Matlab readable object mil gaya.
+
+
+-----------------------------------------------------------------------
+
+QUESTION 2:
+app.use(cookieParser('abc')) kya karta hai?
+
+ANSWER:
+
+Yaha 'abc' ek secret key hai.
+
+Ye:
+1) Cookies read karta hai
+2) Normal cookies ko req.cookies me daalta hai
+3) Signed cookies ko verify karta hai
+4) Verified signed cookies ko req.signedCookies me daalta hai
+
+
+-----------------------------------------------------------------------
+
+QUESTION 3:
+Signed cookie kya hoti hai?
+
+ANSWER:
+
+Normal cookie:
+token=abc123
+
+Signed cookie:
+token=s%3Aabc123.signatureValue
+
+Signed cookie me:
+Value + signature hota hai.
+
+Agar koi browser me manually value change kare,
+to signature match nahi karega.
+Server pakad lega.
+
+
+-----------------------------------------------------------------------
+
+QUESTION 4:
+cookieParser('abc') ka internal working kya hai?
+
+Maan lo browser se cookies aayi:
+
+Cookie: token=abc123; user=s%3Arahul.signature
+
+Yaha:
+token → normal cookie
+user → signed cookie
+
+CASE 1: app.use(cookieParser())
+
+req.cookies = {
+  token: "abc123",
+  user: "s:rahul.signature"
+}
+
+req.signedCookies = {}
+
+Koi verification nahi hota.
+
+
+CASE 2: app.use(cookieParser('abc'))
+
+Step 1:
+Browser se cookies read karega.
+
+Step 2:
+Normal cookies → req.cookies me daalega.
+
+Step 3:
+Signed cookies detect karega (s: prefix se).
+
+Step 4:
+Secret 'abc' se verify karega.
+
+Step 5:
+Agar valid hai:
+
+req.signedCookies = {
+  user: "rahul"
+}
+
+Agar tampered hai:
+
+req.signedCookies.user = false
+
+
+IMPORTANT POINT:
+
+Signed cookie verify karne ke baad
+usko req.cookies me attach nahi karta.
+
+System aise kaam karta hai:
+
+Normal Cookie → req.cookies
+Signed Cookie (valid) → req.signedCookies
+Signed Cookie (invalid) → false
+
+
+-----------------------------------------------------------------------
+
+QUESTION 5:
+JWT ke case me kya best hai?
+
+Agar tum JWT ko HttpOnly cookie me store kar rahe ho:
+
+res.cookie("token", jwtToken, {
+  httpOnly: true
+})
+
+To simple:
+
+app.use(cookieParser())
+
+Enough hai.
+
+JWT already secret se signed hota hai.
+Isliye signed cookie banana usually necessary nahi hota.
+
+
+-----------------------------------------------------------------------
+
+SIMPLE ANALOGY:
+
+Normal cookie = dabba
+Signed cookie = dabba + lock
+Secret key = lock ki chaabi
+
+JWT = already lock wala dabba
+
+Isliye JWT ke saath extra signed cookie usually zaruri nahi.
+
+-----------------------------------------------------------------------
+
+FINAL CLEAR LINE:
+
+cookieParser()
+→ Sirf cookies read karta hai aur req.cookies me daalta hai.
+
+cookieParser('secret')
+→ Cookies read karta hai
+→ Signed cookies verify karta hai
+→ Verified data req.signedCookies me daalta hai.
+
+JWT system me simple wala enough hota hai.
+
+**********************************************************************/
