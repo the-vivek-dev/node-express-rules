@@ -378,9 +378,90 @@
  * bank.com हर user के लिए अलग _csrf secret generate करता है।
  * इसलिए hacker दूसरे user के लिए valid CSRF token generate नहीं कर सकता।
 
+==============================================================================
+
+/*
+CSRF Implementation – Short Notes (2 Main Ways)
+
+
+👉 Haan — CSRF ko mainly 2 common ways se implement kiya jata hai.
+
+
+ 1️⃣ Session-Based CSRF Token (Stateful)
+
+✔ Server ek random CSRF token generate karta hai  
+✔ Token server ke session me store karta hai  
+✔ Same token frontend ko de deta hai  
+✔ Jab request aati hai:
+     - Frontend se aaya token
+     - Session me stored token
+     match kiya jata hai  
+
+  Match → Request valid  
+❌ Mismatch → Request reject  
+
+👉 Is approach me server state maintain karta hai  
+👉 Session store use hota hai (memory / Redis / DB etc.)  
+
+
+--------------------------------------------------
+
+
+ 2️⃣ Cookie-Based / Double Submit (Stateless)
+
+Is approach me server ko session me token store karne ki zarurat nahi hoti.
+
+
+ (A) Classic Double Submit Pattern
+
+✔ Server ek random token generate karta hai  
+✔ Wahi SAME token:
+     - Cookie me store karta hai
+     - Frontend ko deta hai (header/body ke liye)
+
+✔ Jab request aati hai:
+     cookie.csrfToken === header.csrfToken ?
+
+✔ Simple equality check hota hai  
+✔ Server me token store karna zaruri nahi  
+
+👉 Ye stateless approach hai  
+
+
+
+ (B) Secret-Based Derived Token Pattern
+
+✔ Cookie me ek secret store hota hai  
+✔ Server us secret se derived CSRF token generate karta hai  
+✔ Token frontend ko diya jata hai  
+✔ Request aane par:
+     - Cookie se secret read hota hai
+     - Server secret se dubara token generate karta hai
+     - Compare karta hai frontend wale token se  
+
+✔ Yaha SAME value nahi hoti  
+✔ Cryptographic relation hota hai  
+
+
+--------------------------------------------------
+
+
+ Final Clear Line
+
+CSRF mainly 2 tarike se implement hota hai:
+
+1️⃣ Session-based (Stateful)
+2️⃣ Cookie-based / Double submit (Stateless)
+
+Dono valid approaches hain.
+*/
+
+
 =================================================================================
 
 /*
+CSRF ko 2 ways se implement kiya jata h---
+1) Double submit 
 Tum bol rahe ho:
 
 Double submit me dono jagah same token nahi hota
