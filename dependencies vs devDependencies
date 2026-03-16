@@ -1,0 +1,118 @@
+/*
+===============================
+NPM : dependencies vs devDependencies
+===============================
+
+1️⃣ dependencies क्या होती हैं
+
+dependencies = वो packages जो application run करने के लिए जरूरी होते हैं।
+
+मतलब अगर server production में चलाना है तो ये packages जरूरी हैं।
+
+Example packages:
+- Express.js
+- Mongoose
+- Axios
+
+Install command:
+
+npm install express
+या
+npm i express
+
+Install होने के बाद package.json में ऐसे दिखेगा:
+
+{
+  "dependencies": {
+    "express": "^4.18.0"
+  }
+}
+
+मतलब:
+server चलाने के लिए express जरूरी है।
+
+
+--------------------------------
+
+2️⃣ devDependencies क्या होती हैं
+
+devDependencies = वो packages जो सिर्फ development के समय काम आते हैं।
+
+Production server चलाने के लिए जरूरी नहीं होते।
+
+Example packages:
+- Nodemon (server auto restart)
+- ESLint (code linting)
+- Prettier (code formatting)
+
+Install command:
+
+npm i nodemon -D
+
+या
+
+npm install nodemon --save-dev
+
+Install होने के बाद package.json में ऐसे दिखेगा:
+
+{
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
+
+
+--------------------------------
+
+3️⃣ Simple difference
+
+dependencies
+- app run करने के लिए जरूरी
+- production में install होती हैं
+- command: npm i package_name
+
+devDependencies
+- सिर्फ development के लिए
+- production में जरूरी नहीं
+- command: npm i package_name -D
+
+
+--------------------------------
+
+4️⃣ Real project example
+
+project
+│
+├─ dependencies
+│     express
+│     mongoose
+│
+├─ devDependencies
+│     nodemon
+│     eslint
+
+मतलब:
+server के लिए express चाहिए
+लेकिन development में nodemon चाहिए
+
+
+--------------------------------
+
+5️⃣ Production server क्या install करता है
+
+अगर server पर run करते हैं:
+
+npm install --production
+
+तो सिर्फ dependencies install होंगी।
+devDependencies install नहीं होंगी।
+
+
+--------------------------------
+
+6️⃣ Interview one-line answer
+
+dependencies = application run करने के लिए जरूरी packages
+
+devDependencies = development के समय इस्तेमाल होने वाले packages
+*/
