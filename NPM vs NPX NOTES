@@ -1,0 +1,107 @@
+/*
+===============================
+NPM vs NPX NOTES (Node.js)
+===============================
+
+1️⃣ npm kya hai
+
+npm = Node Package Manager
+
+npm ka use packages install karne ke liye hota hai.
+Ye Node.js ka official package manager hai.
+
+Example:
+
+npm install chalk
+npm i chalk
+
+Is command se "chalk" package download hoga
+aur project ke node_modules folder me install ho jayega.
+
+
+--------------------------------
+
+2️⃣ npx kya hai
+
+npx ka use package ko run karne ke liye hota hai
+bina permanently install kiye.
+
+Example:
+
+npx create-react-app myapp
+
+Is case me create-react-app temporary download hoga
+run karega aur fir remove ho jayega.
+
+Matlab global install ki zarurat nahi.
+
+
+--------------------------------
+
+3️⃣ npm vs npx difference
+
+npm
+- package install karta hai
+- node_modules me store karta hai
+- permanent installation hota hai
+
+npx
+- package run karta hai
+- temporary download karta hai
+- permanently install nahi karta
+
+
+--------------------------------
+
+4️⃣ Example
+
+npm install nodemon
+
+Isse nodemon permanently install ho jayega.
+
+npx nodemon server.js
+
+Isse nodemon temporary run hoga
+chahe install na ho.
+
+
+--------------------------------
+
+5️⃣ Real use cases
+
+npm use hota hai jab:
+
+- express
+- mongoose
+- axios
+
+jaise packages project me use karne ho.
+
+
+npx use hota hai jab:
+
+- CLI tools run karne ho
+- ek baar ke liye package chalana ho
+
+
+--------------------------------
+
+6️⃣ Simple yaad rakhne ka rule
+
+npm = install package
+npx = execute package
+
+--------------------------------
+
+Example summary:
+
+npm i express
+→ express install hoga
+
+npx nodemon app.js
+→ nodemon run hoga
+
+===============================
+END
+===============================
+*/
