@@ -1,0 +1,274 @@
+/*
+==================================================
+NODE JS IMPORTANT NOTES
+==================================================
+
+
+1️⃣ Module kya hota hai
+
+Module ek single JavaScript file hoti hai
+jisme reusable code hota hai.
+
+Example:
+
+math.js
+
+function add(a,b){
+  return a+b
+}
+
+module.exports = add
+
+Is file ko module kahenge.
+
+Simple definition:
+
+Module = reusable code in a single file.
+
+
+--------------------------------------------------
+
+
+2️⃣ Package kya hota hai
+
+Package multiple modules ka collection hota hai
+jisme ek package.json file bhi hoti hai.
+
+Package ko npm par publish kiya jata hai.
+
+Example packages:
+
+express
+chalk
+axios
+
+Simple definition:
+
+Package = collection of modules + package.json
+
+
+--------------------------------------------------
+
+
+3️⃣ Node.js me 3 type ke modules hote hain
+
+1. Core Modules
+2. Local Modules
+3. Third Party Modules
+
+
+Core Modules
+
+Ye Node.js ke built-in modules hote hain.
+
+Example:
+
+fs
+http
+path
+
+
+Local Modules
+
+Jo modules hum khud banate hain project ke andar.
+
+Example:
+
+./math.js
+./auth.js
+
+
+Third Party Modules
+
+Jo npm se install hote hain.
+
+Example:
+
+npm install express
+npm install chalk
+
+
+--------------------------------------------------
+
+
+4️⃣ require() kya karta hai
+
+require() kisi module ko import karta hai.
+
+Example:
+
+const express = require("express")
+
+Ya local module:
+
+const math = require("./math")
+
+
+--------------------------------------------------
+
+
+5️⃣ module.exports kya karta hai
+
+module.exports ka use module se data bahar
+bhejne ke liye hota hai.
+
+Example:
+
+function add(a,b){
+ return a+b
+}
+
+module.exports = add
+
+
+--------------------------------------------------
+
+
+6️⃣ Module caching kya hota hai
+
+Node.js kisi module ko sirf ek baar load karta hai.
+
+Uske baad module cache me store ho jata hai.
+
+Agar dobara require karein to
+module dubara execute nahi hota.
+
+Example:
+
+require("./math")
+require("./math")
+
+math module sirf ek baar load hoga.
+
+
+Cache location:
+
+require.cache
+
+
+--------------------------------------------------
+
+
+7️⃣ npm kya hai
+
+npm = Node Package Manager
+
+Ye Node.js ka package manager hai
+jisse hum libraries install karte hain.
+
+Example:
+
+npm install express
+npm i chalk
+
+
+--------------------------------------------------
+
+
+8️⃣ dependencies vs devDependencies
+
+
+dependencies
+
+Ye packages application run karne ke liye
+jaruri hote hain.
+
+Example:
+
+express
+mongoose
+
+
+devDependencies
+
+Ye packages development ke liye hote hain.
+
+Example:
+
+nodemon
+eslint
+
+
+Install commands
+
+npm install express
+
+npm install nodemon -D
+
+
+--------------------------------------------------
+
+
+9️⃣ npm vs npx
+
+
+npm
+
+package install karta hai
+
+Example:
+
+npm install express
+
+
+npx
+
+package ko run karta hai bina install kiye
+
+Example:
+
+npx nodemon server.js
+
+
+Simple rule
+
+npm = install package
+
+npx = run package
+
+
+--------------------------------------------------
+
+
+10️⃣ node_modules folder
+
+Jab npm se package install karte hain
+to sab packages is folder me store hote hain.
+
+Example:
+
+node_modules
+   express
+   chalk
+   axios
+
+
+--------------------------------------------------
+
+
+11️⃣ package.json
+
+Ye project ka configuration file hota hai.
+
+Isme likha hota hai:
+
+project name
+version
+dependencies
+scripts
+
+Example:
+
+{
+ "name": "myapp",
+ "version": "1.0.0",
+ "dependencies": {
+   "express": "^4.18.0"
+ }
+}
+
+
+==================================================
+END OF NOTES
+==================================================
+*/
