@@ -1,0 +1,158 @@
+/*
+==================================================
+NODE JS ARCHITECTURE NOTES
+==================================================
+
+
+1️⃣ Node.js kya hai
+
+Node.js ek JavaScript runtime environment hai
+jo JavaScript ko browser ke bahar run karne deta hai.
+
+Ye server-side development ke liye use hota hai.
+
+
+--------------------------------------------------
+
+
+2️⃣ Node.js architecture ke main components
+
+Node.js mainly 4 cheezon se milkar bana hai:
+
+1. V8 Engine
+2. Event Loop
+3. libuv
+4. Thread Pool
+
+
+--------------------------------------------------
+
+
+3️⃣ V8 Engine
+
+V8 engine JavaScript code ko
+machine code me convert karta hai.
+
+Isse JavaScript fast run hota hai.
+
+Ye engine originally Google Chrome ke liye banaya gaya tha.
+
+Node.js bhi isi engine ka use karta hai.
+
+
+Example flow:
+
+JavaScript code
+      ↓
+V8 Engine
+      ↓
+Machine Code
+      ↓
+Execution
+
+
+--------------------------------------------------
+
+
+4️⃣ Event Loop
+
+Event loop asynchronous tasks ko handle karta hai.
+
+Ye continuously check karta hai:
+
+kya call stack empty hai?
+
+Agar empty hai to
+queue se next task uthata hai.
+
+
+--------------------------------------------------
+
+
+5️⃣ libuv kya hai
+
+libuv ek C library hai
+jo Node.js ko asynchronous I/O provide karti hai.
+
+Ye handle karta hai:
+
+file system
+network operations
+timers
+event loop
+
+
+Matlab Node.js ke async power ka main reason
+libuv hai.
+
+
+--------------------------------------------------
+
+
+6️⃣ Thread Pool
+
+Node.js single-threaded hai
+lekin kuch heavy tasks thread pool me run hote hain.
+
+Example tasks:
+
+file system operations
+crypto operations
+DNS lookup
+
+Thread pool me usually 4 threads hote hain.
+
+
+--------------------------------------------------
+
+
+7️⃣ Request flow example
+
+User request
+      ↓
+Node.js server
+      ↓
+Event Loop
+      ↓
+libuv
+      ↓
+Thread Pool / OS
+      ↓
+Response back to user
+
+
+--------------------------------------------------
+
+
+8️⃣ Node.js fast kyu hai
+
+Node.js fast hone ke main reasons:
+
+- Non-blocking I/O
+- Event driven architecture
+- V8 engine
+- Efficient memory usage
+
+
+--------------------------------------------------
+
+
+9️⃣ Simple summary
+
+Node.js architecture:
+
+JavaScript code
+      ↓
+V8 Engine
+      ↓
+Event Loop
+      ↓
+libuv
+      ↓
+Thread Pool / OS
+
+
+==================================================
+END
+==================================================
+*/
