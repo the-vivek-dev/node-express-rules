@@ -1,0 +1,191 @@
+/*
+==================================================
+NODE JS EVENT LOOP NOTES
+==================================================
+
+
+1️⃣ Event Loop kya hota hai
+
+Event Loop ek mechanism hai jo Node.js ko
+non-blocking aur asynchronous banata hai.
+
+Ye decide karta hai ki kaunsa task kab execute hoga.
+
+
+--------------------------------------------------
+
+
+2️⃣ Node.js single threaded hai
+
+Node.js ek single thread par run karta hai.
+
+Matlab ek hi main thread hota hai jo code execute karta hai.
+
+Lekin fir bhi Node.js thousands of requests handle kar sakta hai
+kyunki ye asynchronous architecture use karta hai.
+
+
+--------------------------------------------------
+
+
+3️⃣ Blocking vs Non-blocking
+
+
+Blocking code
+
+Jab ek task complete hone tak
+next task wait kare.
+
+Example:
+
+file read hone tak program ruk jayega.
+
+
+Non-blocking code
+
+Task background me chalta hai
+aur program next task execute kar leta hai.
+
+Example:
+
+database request background me jayega
+aur program aage chal jayega.
+
+
+--------------------------------------------------
+
+
+4️⃣ Node.js ka architecture
+
+
+User Request
+     |
+     v
+Event Loop
+     |
+     v
+Task Queue
+     |
+     v
+Callback Execution
+
+
+--------------------------------------------------
+
+
+5️⃣ Simple example
+
+
+console.log("Start")
+
+setTimeout(()=>{
+   console.log("Timer finished")
+},2000)
+
+console.log("End")
+
+
+Output:
+
+Start
+End
+Timer finished
+
+
+Explanation
+
+setTimeout background me chala gaya
+aur event loop ne baad me execute kiya.
+
+
+--------------------------------------------------
+
+
+6️⃣ Event Loop ka kaam
+
+
+Event loop continuously check karta hai:
+
+kya call stack empty hai?
+
+Agar empty hai to
+queue se next task uthata hai.
+
+
+--------------------------------------------------
+
+
+7️⃣ Important components
+
+
+Call Stack
+
+Yahan synchronous code execute hota hai.
+
+
+Callback Queue
+
+Yahan async callbacks wait karte hain.
+
+
+Event Loop
+
+Queue se callback uthakar
+call stack me bhejta hai.
+
+
+--------------------------------------------------
+
+
+8️⃣ Example flow
+
+
+console.log("A")
+
+setTimeout(()=>{
+ console.log("B")
+},0)
+
+console.log("C")
+
+
+Output:
+
+A
+C
+B
+
+
+Kyuki setTimeout async hai
+isliye pehle synchronous code run hota hai.
+
+
+--------------------------------------------------
+
+
+9️⃣ Real world use
+
+
+Node.js event loop ki wajah se handle kar sakta hai:
+
+- API requests
+- database queries
+- file operations
+- network calls
+
+
+--------------------------------------------------
+
+
+🔟 Simple definition
+
+
+Event Loop = mechanism jo async tasks ko
+queue se uthakar execute karta hai
+jab call stack empty ho.
+
+
+==================================================
+END
+==================================================
+*/
