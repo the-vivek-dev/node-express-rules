@@ -178,3 +178,34 @@ socket.emit("receive_message", data);
 🔹 5. io.on("connection")
 
 👉 “koi naya banda system me enter hua — usko handle karo”
+-----------------------------------------------------------------
+
+const socket = io("http://localhost:5000", {
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 2000
+});
+
+socket.on("connect", () => {
+  console.log("Connected");
+});
+
+socket.on("disconnect", () => {
+  console.log("Disconnected");
+});
+
+socket.on("connect_error", (err) => {
+  console.log("Connect error:", err.message);
+});
+
+socket.on("reconnect_attempt", () => {
+  console.log("Retrying...");
+});
+
+socket.on("reconnect", () => {
+  console.log("Reconnected");
+});
+
+socket.on("reconnect_failed", () => {
+  console.log("Failed completely");
+});
