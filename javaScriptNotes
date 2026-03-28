@@ -1,3 +1,5 @@
+How to Traverse object in mordern modern way ---------------------------------
+
 Object.entries(obj).forEach(([key, value]) => {
   console.log(key, value);
 });
