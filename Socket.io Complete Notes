@@ -1,10 +1,10 @@
 /**
  * ================================
- * 📚 SOCKET.IO COMPLETE NOTES
+ *  SOCKET.IO COMPLETE NOTES
  * ================================
  * 
 
-   🧠 1. Sabse Pehle Core Concept Samajh
+    1. Sabse Pehle Core Concept Samajh
 
 👉 Socket.IO me sirf 2 main cheeze hoti hain:
 
@@ -13,14 +13,14 @@ io	--- Server (poora system)
 socket ---	Ek single user connection
 
 
- * 🧠 CORE CONCEPT:
+ *  CORE CONCEPT:
  * Socket.IO me sirf 2 main cheeze hoti hain:
  * 
  * 1. io     → Server (poora system)
  * 2. socket → Ek single user connection
  * 
  * -------------------------------
- * 🔑 GOLDEN RULE:
+ *  GOLDEN RULE:
  * 
  * on   = sunna (listen karna)
  * emit = bhejna (send karna)
@@ -64,7 +64,7 @@ socket ---	Ek single user connection
  * ❌ emit.socket()
  * 
  * -------------------------------
- * 🔥 EXTRA IMPORTANT METHODS:
+ *  EXTRA IMPORTANT METHODS:
  * 
  * 1. io.to(socketId).emit()
  *    → kisi specific user ko send
@@ -80,7 +80,7 @@ socket ---	Ek single user connection
  *    → specific user ko bhejo but sender ko nahi
  * 
  * -------------------------------
- * 🧪 REAL FLOW EXAMPLE:
+ *  REAL FLOW EXAMPLE:
  * 
  * Scenario:
  * user1 → message bhejta hai user2 ko
@@ -95,13 +95,13 @@ socket ---	Ek single user connection
  * socket.emit("receive_message", data)
  * 
  * -------------------------------
- * 🧠 EASY MEMORY TRICK:
+ *  EASY MEMORY TRICK:
  * 
  * "Server (io) sabko dekhta hai,
  *  user (socket) apna kaam karta hai"
  * 
  * -------------------------------
- * 🎯 QUICK TABLE:
+ *  QUICK TABLE:
  * 
  * server start           → io.on()
  * user se sunna         → socket.on()
@@ -110,7 +110,7 @@ socket ---	Ek single user connection
  * specific user         → io.to().emit()
  * 
  * -------------------------------
- * 🔥 VISUAL:
+ *  VISUAL:
  * 
  *         io (Server)
  *        /    |     \
@@ -121,7 +121,7 @@ socket ---	Ek single user connection
  * io.to().emit()   → kisi ek specific
  * 
  * -------------------------------
- * 🚀 FINAL SUMMARY:
+ *  FINAL SUMMARY:
  * 
  * on   = receive
  * emit = send
