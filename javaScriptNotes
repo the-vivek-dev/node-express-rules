@@ -1,0 +1,89 @@
+Object.entries(obj).forEach(([key, value]) => {
+  console.log(key, value);
+});
+--------------------------------------------------
+   1. Object lete hain
+const obj = {
+  name: "Vivek",
+  age: 22,
+  city: "Darbhanga"
+};
+
+ 2. Code jo tu bol raha hai
+Object.entries(obj).forEach(([key, value]) => {
+  console.log(key, value);
+});
+
+3. Step-by-Step Dry Run
+  Step 1: Object.entries(obj) kya karta hai?
+
+👉 Ye object ko array of pairs me convert karta hai:
+
+[
+  ["name", "Vivek"],
+  ["age", 22],
+  ["city", "Darbhanga"]
+]
+  Step 2: .forEach() loop chalega
+
+👉 Loop 1:
+
+[key, value] = ["name", "Vivek"]
+
+➡️ Output:
+
+name Vivek
+
+👉 Loop 2:
+
+[key, value] = ["age", 22]
+
+➡️ Output:
+
+age 22
+
+👉 Loop 3:
+
+[key, value] = ["city", "Darbhanga"]
+
+➡️ Output:
+
+city Darbhanga
+ 4. Final Output
+name Vivek
+age 22
+city Darbhanga
+ 5. Important Concept (Very Important)
+
+👉 Ye line:
+
+([key, value])
+
+👉 Isko bolte hain destructuring
+
+➡️ Matlab:
+
+["name", "Vivek"] → key = "name", value = "Vivek"
+  
+ 6. Tere Real Project (ChatApp) me (userMap)
+                          
+const usersConnection = {
+  user1: new Set(["A1", "A2"]),
+  user2: new Set(["B1"])
+};
+Traverse:
+Object.entries(usersConnection).forEach(([userId, sockets]) => {
+  console.log(userId, sockets);
+});
+Output:
+user1 Set(2) { 'A1', 'A2' }
+user2 Set(1) { 'B1' }
+
+ Final Answer
+
+👉 Haan bhai, ye use karna chahiye ✅
+👉 Modern + clean + readable
+
+ 1 Line yaad rakh
+
+Object.entries() = object ko loop-friendly bana deta hai
