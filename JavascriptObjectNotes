@@ -1,0 +1,27 @@
+// Example object
+const obj1 = {
+  name: "vivek",
+  course: "bss",
+  id: 34
+};
+
+// ------------------------------
+// 1️⃣ Get all keys of the object
+// Object.keys() returns an array containing all the keys of the object
+const arr1 = Object.keys(obj1);
+console.log(arr1); 
+// Output: ['name', 'course', 'id']
+
+// ------------------------------
+// 2️⃣ Get all values of the object
+// Object.values() returns an array containing all the values of the object
+const arr2 = Object.values(obj1);
+console.log(arr2); 
+// Output: ['vivek', 'bss', 34]
+
+// ------------------------------
+// 3️⃣ Get all key-value pairs of the object
+// Object.entries() returns an array of arrays, each containing [key, value]
+const arr3 = Object.entries(obj1);
+console.log(arr3); 
+// Output: [ ['name', 'vivek'], ['course', 'bss'], ['id', 34] ]
