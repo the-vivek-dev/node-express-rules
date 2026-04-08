@@ -1,0 +1,118 @@
+/*
+ GOLDEN RULE
+agar function baad me (future me) run hoga → closure (capture) hoga 
+agar function turant run hoga → latest value milegi ✅
+
+
+ STEP-BY-STEP CHECK
+
+Step 1: ye dekh — function kab run ho raha hai?
+
+👉 Case A: Turant run
+function test() {
+  console.log(x);
+}
+test();
+
+✔️ latest value
+❌ closure issue nahi
+
+
+👉 Case B: Delay / future / event
+setTimeout(() => {
+  console.log(x);
+}, 1000);
+
+ closure (capture)
+
+
+⚠️ MOST IMPORTANT SIGNALS
+
+agar code me ye dikhe:
+- setTimeout
+- setInterval
+- socket.on
+- addEventListener
+- Promise.then
+- async/await callback
+
+⚠️ ye closure trap hai
+
+
+ Step 2: function return ho raha hai kya?
+
+function outer() {
+  let x = 10;
+
+  return function inner() {
+    console.log(x);
+  };
+}
+
+- closure
+kyunki inner future me run hoga
+
+
+- Step 3: function kisi aur ko diya gaya hai?
+
+button.addEventListener("click", () => {
+  console.log(x);
+});
+
+- closure
+kyunki browser baad me call karega
+
+
+- IMPORTANT CLARIFICATION
+
+closure sirf outer + inner function se nahi hota ❌
+
+closure tab hota hai jab:
+function apne scope ke bahar bhi survive kare ✅
+
+
+- Examples
+
+- Closure
+useEffect(() => {
+  socket.on("event", () => {
+    console.log(receiverInfo);
+  });
+}, []);
+
+kyunki socket future me call karega
+
+
+✅ No closure problem
+console.log(receiverInfo);
+
+turant run → latest
+
+
+- SUPER SIMPLE TRICK
+
+apne aap se puch:
+"ye function abhi run ho raha hai ya baad me?"
+
+👉 agar:
+abhi → latest value ✅
+baad me → captured value 
+
+
+- VISUAL MEMORY TRICK
+
+Immediate call → live camera 
+Delayed call → screenshot 
+
+
+- FINAL SUMMARY
+
+closure sirf nested function nahi ❌
+closure = future execution + captured scope ✅
+
+
+- FINAL LINE
+
+Function agar "wait" karega → closure banega
+Function agar "run now" hai → latest milega
+*/
